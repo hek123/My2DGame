@@ -6,33 +6,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BaseKeyAdapter extends KeyAdapter {
-    private final SwitchScreen ss;
     private final Set<Integer> keysPressed = new HashSet<>();
     private final Set<Integer> waitForKeyRelease = new HashSet<>();
-
-    public BaseKeyAdapter(SwitchScreen switchScreen) {
-        super();
-        ss = switchScreen;
-    }
 
     @Override
     public synchronized void keyPressed(KeyEvent e) {
         super.keyPressed(e);
         keysPressed.add(e.getKeyCode());
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_Q -> {
-//                int option = JOptionPane.showConfirmDialog(null, "Are you sure?", "Exit?", JOptionPane.YES_NO_OPTION);
-//                if (option == 0) {
-                    System.out.println("exit");
-                    System.exit(0);
-//                }
-            }
-            case KeyEvent.VK_ESCAPE -> {
-                ss.switchScreen(ss.main);
-            }
-//            case KeyEvent.VK_F -> {
-//                ss.fullScreen();
-//            }
+        if (e.getKeyCode() == KeyEvent.VK_Q) {
+            Main.exit();
         }
     }
 
@@ -54,5 +36,10 @@ public class BaseKeyAdapter extends KeyAdapter {
         } else {
             return false;
         }
+    }
+
+    public void reset() {
+        keysPressed.clear();
+        waitForKeyRelease.clear();
     }
 }

@@ -1,21 +1,17 @@
 package game.main;
 
 import main.BaseKeyAdapter;
-import main.Test;
 
 import java.awt.event.KeyEvent;
 
 import static game.main.GamePanel.game;
+import static main.Main.optionPanel;
 
 
 public class MyKeyHandler extends BaseKeyAdapter {
     private final int pauseKey = KeyEvent.VK_P;
     public final int attackKey = KeyEvent.VK_F;
     public final int upKey = KeyEvent.VK_UP, downKey = KeyEvent.VK_DOWN, leftKey = KeyEvent.VK_LEFT, rightKey = KeyEvent.VK_RIGHT;
-
-    MyKeyHandler() {
-        super(Test.jFrame);
-    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -46,9 +42,9 @@ public class MyKeyHandler extends BaseKeyAdapter {
                 }
             }
         }
-        if (OptionPanel.optionPanel.visible) {
+        if (optionPanel.visible) {
             if (isKeyClicked(KeyEvent.VK_M))
-                OptionPanel.optionPanel.hideO();
+                optionPanel.hideO();
         }
     }
 }

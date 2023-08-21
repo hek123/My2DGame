@@ -7,13 +7,17 @@ import game.tile.TileManager;
 import game.ui.Scalable;
 import game.ui.UI;
 import game.visual.EntityManager;
+import main.Main;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static game.main.GamePanel.*;
+import static main.Main.gamePanel;
+import static main.Main.optionPanel;
 
 
 public class Game {
@@ -28,10 +32,9 @@ public class Game {
 
     private AssetSetter assetSetter;
 
-//    Thread gameThread;
-    ScheduledThreadPoolExecutor gameThread;
-    long nanoTime;
-    int fpsUpdateCtr = 0;
+    private ScheduledThreadPoolExecutor gameThread;
+    public long nanoTime;
+    private int fpsUpdateCtr = 0;
 
     // GAME STATE
     static public @NotNull GameState gameState = GameState.FINISHED;
@@ -50,31 +53,47 @@ public class Game {
         assetSetter.setMonster();
     }
 
-    public void startGame(GamePanel gamePanel) {
+    public void startGame() {
         initGame();
 
         System.out.println(gamePanel.getSize());
-        Scalable.scaleAllWindows(gamePanel.getPreferredSize());
+        Scalable.scaleAllWindows(gamePanel.getSize());
+
+        keyHandler.reset();
 
         gameState = GameState.PLAY;
         gameCounter = 0;
         tileManager.update();
 
-//        gameThread = new Thread(gamePanel);
         gameThread = new ScheduledThreadPoolExecutor(1);
-        gameThread.scheduleAtFixedRate(gamePanel, 0, 1_000_000_000 / FPS, TimeUnit.NANOSECONDS);
-
-//        gameThread.start();
+        gameThread.scheduleAtFixedRate(this::gameLoop, 0, 1_000_000_000 / FPS, TimeUnit.NANOSECONDS);
     }
 
     public void stopGame() {
         entityManager.clearMap();
 
-        gameThread = null;
+        gameThread.shutdown();
+
         gameState = GameState.FINISHED;
     }
 
-    public void update() {
+    public void gameLoop() {
+//        System.out.println("Game loop is Running!");
+        // 1) UPDATE: update information such as character position
+        update();
+        if (!optionPanel.visible)
+            if (keyHandler.isKeyClicked(KeyEvent.VK_M))
+                optionPanel.showO();
+        if (keyHandler.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+            System.out.println("esc");
+            Main.goToMainMenu();
+        }
+
+        // 2) DRAW: draw the screen with the updated information
+        gamePanel.repaint();
+    }
+
+    void update() {
         if (fpsUpdateCtr == FPS / 2) {
             long time = System.nanoTime();
             fps = ((double) fpsUpdateCtr) / ((time - nanoTime) * 1e-9);
@@ -101,7 +120,7 @@ public class Game {
         }
     }
 
-    public void draw(Graphics2D g2d, Vector2D framePos) {
+    void draw(Graphics2D g2d, Vector2D framePos) {
         tileManager.draw(g2d, framePos);
 
         entityManager.drawAnimations(g2d, framePos);

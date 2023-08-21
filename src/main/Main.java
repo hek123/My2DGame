@@ -11,33 +11,32 @@ import java.awt.event.ComponentEvent;
 
 import static game.main.GamePanel.*;
 
+
 public class Main extends JFrame {
     public static void main(String[] args) {
         new Main();
     }
 
-    CardLayout cardLayout;
-    JPanel cardPanel;
+    private static final CardLayout cardLayout = new CardLayout();
+    private static final JPanel cardPanel = new JPanel(cardLayout);
 
-    JLayeredPane layeredPane;
-    GamePanel gamePanel;
-    OptionPanel optionPanel;
+    private static final MainPanel mainPanel = new MainPanel();
 
-    String game = "game", main = "main";
+    private static final JLayeredPane layeredPane = new JLayeredPane();
+    public static final GamePanel gamePanel = new GamePanel();
+    public static final OptionPanel optionPanel = new OptionPanel();
+
+    private static final String game = "game", main = "main";
 
     Main() {
         super("2D Adventure");
 
         setMinimumSize(initialSize);
 
-        cardLayout = new CardLayout();
-        cardPanel = new JPanel(cardLayout);
         cardPanel.setPreferredSize(initialSize);
 
-        MainPanel mainPanel = new MainPanel();
         cardPanel.add(mainPanel, main);
 
-        layeredPane = new JLayeredPane();
         layeredPane.addKeyListener(keyHandler);
         layeredPane.addMouseListener(mouseHandler);
         layeredPane.addComponentListener(new ComponentAdapter() {
@@ -50,8 +49,6 @@ public class Main extends JFrame {
         });
         layeredPane.setFocusable(true);
 
-        gamePanel = new GamePanel();
-        optionPanel = new OptionPanel();
         gamePanel.setFocusable(false);
         optionPanel.setFocusable(false);
 
@@ -68,14 +65,32 @@ public class Main extends JFrame {
         setEnabled(true);
         setVisible(true);
 
+        goToMainMenu();
+    }
+
+    private static void showPanel(String card_panel) {
+        cardLayout.show(cardPanel, card_panel);
+    }
+
+    public static void goToMainMenu() {
+        showPanel(main);
+        mainPanel.requestFocus();
+
+        gamePanel.stopGame();
+    }
+
+    public static void startGame() {
         showPanel(game);
         layeredPane.requestFocus();
 
         gamePanel.startNewGame();
     }
 
-    void showPanel(String card_panel) {
-        cardLayout.show(cardPanel, card_panel);
+    public static void exit() {
+        gamePanel.stopGame();
+
+        System.out.println("exit");
+        System.exit(0);
     }
 }
 
@@ -83,9 +98,66 @@ public class Main extends JFrame {
 class MainPanel extends JPanel {
 
     MainPanel() {
-        super();
-
+        super(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         setOpaque(true);
         setBackground(Color.yellow);
+        addKeyListener(new BaseKeyAdapter());
+        setFocusable(true);
+
+        JLabel title = new JLabel("My 2D Adventure!", JLabel.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 40));
+        title.setFocusable(false);
+
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        c.gridheight = 1;
+        c.insets = new Insets(50, 0, 0, 0);
+        add(title, c);
+
+        JComponent center = createCenterButtons();
+
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.weightx = .5;
+        c.weighty = 1.;
+        c.anchor = GridBagConstraints.CENTER;
+        add(center, c);
+    }
+
+    JComponent createCenterButtons() {
+        JPanel center = new JPanel(new GridBagLayout());
+        center.setFocusable(false);
+        center.setOpaque(false);
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        Button play = new MainButton("Play");
+        play.addActionListener(e -> Main.startGame());
+        Button settings = new MainButton("Settings");
+        Button exit = new MainButton("Exit");
+        exit.addActionListener(e -> Main.exit());
+        c.gridx = 0;
+        c.gridy = 0;
+        center.add(play, c);
+        c.gridy++;
+        center.add(settings, c);
+        c.gridy++;
+        center.add(exit, c);
+        c.gridy++;
+        c.insets = new Insets(10, 0, 0, 0);
+        center.add(new MainButton("TileEditor"), c);
+        return center;
+    }
+
+    static class MainButton extends Button {
+        MainButton(String text) {
+            super(text);
+            setFocusable(false);
+        }
     }
 }

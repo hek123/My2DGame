@@ -50,7 +50,7 @@ public class Test extends JFrame implements SwitchScreen {
             System.out.println("exit");
             System.exit(0);
         });
-        main_menu.addKeyListener(new BaseKeyAdapter(jFrame));
+        main_menu.addKeyListener(new BaseKeyAdapter());
 
         tileEditorButton.addActionListener(e -> switchScreen(tileEditor));
     }

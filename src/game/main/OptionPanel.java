@@ -4,13 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class OptionPanel extends JPanel {
-    static public OptionPanel optionPanel;
-
     public boolean visible;
 
     public OptionPanel() {
         super();
-        optionPanel = this;
 
         setLayout(null);
 

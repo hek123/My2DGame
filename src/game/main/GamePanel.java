@@ -9,10 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyEvent;
 
 
-public class GamePanel extends JPanel implements Runnable {
+public class GamePanel extends JPanel {
     // SCREEN SETTINGS
     static public final int originalTileSize = 16; // 16x16 game.tile
     static public final int scale = 3;
@@ -28,8 +27,6 @@ public class GamePanel extends JPanel implements Runnable {
     static public final MouseHandler mouseHandler = new MouseHandler();
 
     static public Game game;
-    static private GamePanel gamePanel;
-
 
     public GamePanel() {
         super(true);  // Provides better rendering performance
@@ -42,75 +39,36 @@ public class GamePanel extends JPanel implements Runnable {
 
         addKeyListener(keyHandler);
         addMouseListener(mouseHandler);
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                Scalable.scaleAllWindows(e.getComponent().getSize());
-            }
-        });
+//        addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                Scalable.scaleAllWindows(e.getComponent().getSize());
+//            }
+//        });
 
         setFocusable(false);
 
         mouseHandler.gamePanel = this;
 
         Sound.loadSound();
-
-        gamePanel = this;
     }
 
     public void startNewGame() {
+        assert game == null;
         game = new Game();
-        game.startGame(gamePanel);
+        game.startGame();
+        System.out.println("started new game");
 
 //        Sound.playMusic(0);
     }
 
     public void stopGame() {
+        System.out.println("stop game");
+        if (game != null) {
+            game.stopGame();
+            game = null;
+        }
         Sound.stopMusic();
-        game.stopGame();
-    }
-
-    @Override
-    public void run() {
-//        final long drawInterval = 1_000_000_000 / FPS;  // nanoseconds
-//        long nextDrawTime = System.nanoTime() + drawInterval;
-//        long remainingTime;
-//
-//        long oldTimer = nextDrawTime;
-//        int ctr = 1;
-//
-//        while (Game.gameState != GameState.FINISHED) {
-            // 1) UPDATE: update information such as character position
-            game.update();
-            if (!OptionPanel.optionPanel.visible)
-                if (keyHandler.isKeyClicked(KeyEvent.VK_M))
-                    OptionPanel.optionPanel.showO();
-
-            // 2) DRAW: draw the screen with the updated information
-            repaint();
-
-//            // 3) Timer
-//            try {
-//                remainingTime = nextDrawTime - System.nanoTime(); // nanoseconds
-//
-//                if (ctr > FPS / 2) {
-//                    fps = (FPS / 2) * 1e9 / (nextDrawTime - oldTimer);
-//                    ctr = 0;
-//                    oldTimer = nextDrawTime;
-//                }
-//                ctr++;
-//
-//                if (remainingTime < 0) {
-//                    nextDrawTime += drawInterval - remainingTime;
-//                } else {
-//                    Thread.sleep(remainingTime / 1_000_000); // milliseconds
-//                    nextDrawTime += drawInterval;
-//                }
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        game = null;
     }
 
     @Override
