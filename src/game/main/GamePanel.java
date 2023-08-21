@@ -10,9 +10,6 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 public class GamePanel extends JPanel implements Runnable {
@@ -75,16 +72,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        final long drawInterval = 1_000_000_000 / FPS;  // nanoseconds
-        long nextDrawTime = System.nanoTime() + drawInterval;
-        long remainingTime;
-
-        long oldTimer = nextDrawTime;
-        int ctr = 1;
-
-//        Lock lock = new ReentrantLock();
-//        Condition cv = lock.newCondition();
-        while (Game.gameState != GameState.FINISHED) {
+//        final long drawInterval = 1_000_000_000 / FPS;  // nanoseconds
+//        long nextDrawTime = System.nanoTime() + drawInterval;
+//        long remainingTime;
+//
+//        long oldTimer = nextDrawTime;
+//        int ctr = 1;
+//
+//        while (Game.gameState != GameState.FINISHED) {
             // 1) UPDATE: update information such as character position
             game.update();
             if (!OptionPanel.optionPanel.visible)
@@ -94,28 +89,28 @@ public class GamePanel extends JPanel implements Runnable {
             // 2) DRAW: draw the screen with the updated information
             repaint();
 
-            // 3) Timer
-            try {
-                remainingTime = nextDrawTime - System.nanoTime(); // nanoseconds
-
-                if (ctr > FPS / 2) {
-                    fps = (FPS / 2) * 1e9 / (nextDrawTime - oldTimer);
-                    ctr = 0;
-                    oldTimer = nextDrawTime;
-                }
-                ctr++;
-
-                if (remainingTime < 0) {
-                    nextDrawTime += drawInterval - remainingTime;
-                } else {
-                    Thread.sleep(remainingTime / 1_000_000); // milliseconds
-                    nextDrawTime += drawInterval;
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        game = null;
+//            // 3) Timer
+//            try {
+//                remainingTime = nextDrawTime - System.nanoTime(); // nanoseconds
+//
+//                if (ctr > FPS / 2) {
+//                    fps = (FPS / 2) * 1e9 / (nextDrawTime - oldTimer);
+//                    ctr = 0;
+//                    oldTimer = nextDrawTime;
+//                }
+//                ctr++;
+//
+//                if (remainingTime < 0) {
+//                    nextDrawTime += drawInterval - remainingTime;
+//                } else {
+//                    Thread.sleep(remainingTime / 1_000_000); // milliseconds
+//                    nextDrawTime += drawInterval;
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        game = null;
     }
 
     @Override

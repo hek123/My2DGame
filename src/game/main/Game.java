@@ -9,11 +9,11 @@ import game.ui.UI;
 import game.visual.EntityManager;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import static game.main.GamePanel.game;
-//import static game.main.GamePanel.jFrame;
+import static game.main.GamePanel.*;
 
 
 public class Game {
@@ -28,7 +28,10 @@ public class Game {
 
     private AssetSetter assetSetter;
 
-    Thread gameThread;
+//    Thread gameThread;
+    ScheduledThreadPoolExecutor gameThread;
+    long nanoTime;
+    int fpsUpdateCtr = 0;
 
     // GAME STATE
     static public @NotNull GameState gameState = GameState.FINISHED;
@@ -57,9 +60,11 @@ public class Game {
         gameCounter = 0;
         tileManager.update();
 
-        gameThread = new Thread(gamePanel);
+//        gameThread = new Thread(gamePanel);
+        gameThread = new ScheduledThreadPoolExecutor(1);
+        gameThread.scheduleAtFixedRate(gamePanel, 0, 1_000_000_000 / FPS, TimeUnit.NANOSECONDS);
 
-        gameThread.start();
+//        gameThread.start();
     }
 
     public void stopGame() {
@@ -70,6 +75,14 @@ public class Game {
     }
 
     public void update() {
+        if (fpsUpdateCtr == FPS / 2) {
+            long time = System.nanoTime();
+            fps = ((double) fpsUpdateCtr) / ((time - nanoTime) * 1e-9);
+            fpsUpdateCtr = 0;
+            nanoTime = time;
+        }
+        fpsUpdateCtr++;
+
         if (gameState != GameState.FINISHED) {
             if (gameState == GameState.PLAY) {
                 game.player.update();
