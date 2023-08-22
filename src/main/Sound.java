@@ -8,6 +8,7 @@ import java.util.Map;
 
 public class Sound {
     static private Clip music, soundEffect;
+    static private FloatControl floatControl;
 
     static {
         try {
@@ -51,25 +52,33 @@ public class Sound {
         }
     }
 
-    static public void setFile(String music, Clip clip) {
+    static public Clip setFile(String music) {
         try {
-            clip = AudioSystem.getClip();
+            Clip clip = AudioSystem.getClip();
             clip.open(audioStreams.get(music));
+            return clip;
         } catch (LineUnavailableException | IOException e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
     }
 
-    static public void playMusic(String music) {
-        setFile(music, Sound.music);
-        Sound.music.start();
-        Sound.music.loop(Clip.LOOP_CONTINUOUSLY);
+    static public void playMusic(String musicName) {
+        music = setFile(musicName);
+        floatControl = (FloatControl) music.getControl(FloatControl.Type.MASTER_GAIN);
+        music.start();
+        music.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
     static public void stopMusic() {
         if (music != null)
             music.stop();
+    }
+
+    static public void setVolume(int volume) {
+        float fcVolume = -40 + 46 * ((float)volume / 100);
+        System.out.println("set gain to " + fcVolume + "dB");
+        floatControl.setValue(fcVolume);
     }
 
     static public void playSoundEffect(String sound) {

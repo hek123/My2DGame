@@ -57,12 +57,13 @@ public final class Player extends Character implements MovementAI {
 
     public final Inventory inventory = new Inventory(10);
 
-    private final Animation walkinAnimation;
+//    private final Animation walkinAnimation;
 
 
     public Player() {
         super(new Rectangle(9, 16, 30, 30));
-        animation = walkinAnimation = new MovingSprite(spriteImages[0], .15, 2);
+        animation = walkingAnimation = new MovingSprite(spriteImages[0], .15, 2);
+        invincibleAnimation = new InvincibleAnimation();
 
         setPosition(23 * GamePanel.tileSize, 21 * GamePanel.tileSize);
         game.entityManager.addEntityToMap(this);
@@ -213,7 +214,7 @@ public final class Player extends Character implements MovementAI {
                 currentSprite = 0;
             } else {
                 attacking = false;
-                animation = walkinAnimation;
+                animation = walkingAnimation;
             }
             spriteCounter++;
             return animation;
@@ -222,6 +223,27 @@ public final class Player extends Character implements MovementAI {
         @Override
         public void drawA(Graphics2D g2d, Vector2D framePos) {
             drawImage(g2d, framePos, spriteImages[1][dirToInt(getDirection())][currentSprite]);
+        }
+    }
+
+    private final class InvincibleAnimation extends Character.InvincibleAnimation {
+        static final private int width = 5;
+        static private final Stroke stroke = new BasicStroke(2*width);
+
+        static private final Color red = new Color(.8f, 0.f, 0.f);
+        static private final Color transpRed = new Color(.8f, 0.f, 0.f, .5f);
+
+        InvincibleAnimation() {
+            super(walkingAnimation);
+        }
+
+        @Override
+        public void drawA(Graphics2D g2d, Vector2D framePos) {
+            super.drawA(g2d, framePos);
+
+            g2d.setColor((damageCoolDownCounter % (FPS / 2) < FPS / 4) ? red : transpRed);
+            g2d.setStroke(stroke);
+            g2d.drawRect(width, width, TileManager.visible.width - 2*width, TileManager.visible.height - 2*width);
         }
     }
 }

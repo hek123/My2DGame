@@ -83,7 +83,7 @@ public class GamePanel extends JPanel implements Scalable {
         game.startGame();
         System.out.println("started new game");
 
-//        Sound.playMusic(0);
+        Sound.playMusic(Sound.BBA);
     }
 
     public void stopGame() {

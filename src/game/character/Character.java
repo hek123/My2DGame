@@ -33,8 +33,12 @@ public abstract class Character extends MovingEntity {
     protected MovementAI movementAI;
 
     // counters
-    private int damageCoolDownCounter = 0;
+    protected int damageCoolDownCounter = 0;
     protected int damageCoolDownTime = FPS;
+
+    // animations
+    protected Animation walkingAnimation, dyingAnimation;
+    protected InvincibleAnimation invincibleAnimation;
 
 
     protected Character(Rectangle BBox) {
@@ -124,7 +128,9 @@ public abstract class Character extends MovingEntity {
                 dying = true;
             } else {
                 invincible = true;
-                animation = new InvincibleAnimation(animation);
+                if (invincibleAnimation == null) invincibleAnimation = new InvincibleAnimation(animation);
+                else invincibleAnimation.reset(animation);
+                animation = invincibleAnimation;
             }
         }
     }
@@ -150,9 +156,9 @@ public abstract class Character extends MovingEntity {
 
     // ### Animations ###
     protected class InvincibleAnimation extends EntityAnimation {
-        final private Animation baseAnimation;
+        private Animation baseAnimation;
 
-        InvincibleAnimation(Animation baseAnimation) {
+        protected InvincibleAnimation(Animation baseAnimation) {
             this.baseAnimation = baseAnimation;
         }
 
@@ -170,10 +176,14 @@ public abstract class Character extends MovingEntity {
             baseAnimation.drawA(g2d, framePos);
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
         }
+
+        public void reset(Animation baseAnimation) {
+            this.baseAnimation = baseAnimation;
+        }
     }
 
     protected class DyingAnimation extends EntityAnimation {
-        private final Animation baseAnimation;
+        Animation baseAnimation;
         int dyingCounter = 0;
 
         public DyingAnimation(Animation baseAnimation) {
