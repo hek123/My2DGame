@@ -4,7 +4,6 @@ import Utility.ImageAnchor;
 import Utility.UtilityTool;
 import game.character.Character;
 import game.player.Magic;
-import game.player.Player;
 import game.visual.Entity;
 import game.visual.animations.Particle;
 
@@ -22,14 +21,11 @@ public class FireBall extends Projectile implements Magic {
     }
     private static final Particle particle = new Particle(8, Color.red, .4);
 
-    private final double speed = 8.5;
-
-    private final Character source;
-
     public FireBall(Character source) {
-        super(new Rectangle(16, 16, 16, 16));
+        super(new Rectangle(16, 16, 16, 16), source, 8.5);
         animation = new MovingSprite(spriteImages, .15, 2);
-        this.source = source;
+
+        setCurrentSpeed(speed);
     }
 
     @Override
@@ -39,26 +35,27 @@ public class FireBall extends Projectile implements Magic {
 
     @Override
     public void use() {
-        new FireBall(source).fire();
+        new FireBall(source).fire(source.getExactDirection());
     }
 
-    private void fire() {
-        Rectangle sourceBBox = source.getNextBBox();
-//        Rectangle thisSA = getSolidArea();
-        Rectangle thisSA = new Rectangle(0, 0, tileSize, tileSize);
-        switch (source.getDirection()) {
-            case LEFT -> setPosition(sourceBBox.x - thisSA.x - thisSA.width, source.getY());
-            case RIGHT -> setPosition(sourceBBox.x + sourceBBox.width - thisSA.x, source.getY());
-            case DOWN -> setPosition(source.getX(), sourceBBox.y + sourceBBox.height - thisSA.y);
-            case UP -> setPosition(source.getX(), sourceBBox.y- thisSA.height - thisSA.y);
-        }
-
-        setDirection(source.getDirection());
-        setCurrentSpeed(speed);
-        moving = true;
-
-        game.entityManager.addMovingEntityToMap(this);
-    }
+//    private void fire() {
+//        fire(source.getExactDirection());
+//        Rectangle sourceBBox = source.getNextBBox();
+////        Rectangle thisSA = getSolidArea();
+//        Rectangle thisSA = new Rectangle(0, 0, tileSize, tileSize);
+//        switch (source.getDirection()) {
+//            case LEFT -> setPosition(sourceBBox.x - thisSA.x - thisSA.width, source.getY());
+//            case RIGHT -> setPosition(sourceBBox.x + sourceBBox.width - thisSA.x, source.getY());
+//            case DOWN -> setPosition(source.getX(), sourceBBox.y + sourceBBox.height - thisSA.y);
+//            case UP -> setPosition(source.getX(), sourceBBox.y- thisSA.height - thisSA.y);
+//        }
+//
+//        setDirection(source.getDirection());
+//        setCurrentSpeed(speed);
+//        moving = true;
+//
+//        game.entityManager.addMovingEntityToMap(this);
+//    }
 
     @Override
     public int magicCost() {
@@ -67,15 +64,15 @@ public class FireBall extends Projectile implements Magic {
 
     @Override
     protected void action() {
-        if (!isMoving())
+        if (!isMoving()) {
             game.entityManager.removeMovingEntityFromMap(this);
+            System.out.println("fiya dead");
+        }
     }
 
     @Override
     public void entityInteraction(Entity entity) {
-        if (entity instanceof Player) {
-            setCurrentSpeed(speed);
-            moving = true;
+        if (collisionExceptions.contains(entity)) {
             System.err.println("Fireball hit Player");
         } else if (entity instanceof Character character) {
             character.receiveDamageFrom(source.strength + 1, source);

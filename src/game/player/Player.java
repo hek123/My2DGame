@@ -12,6 +12,7 @@ import game.object.SuperObject;
 import game.main.*;
 import game.object.shield.Shield;
 import game.object.weapon.Weapon;
+import game.tile.TileManager;
 import game.visual.Entity;
 import game.projectile.Arrow;
 import game.projectile.FireBall;
@@ -110,6 +111,7 @@ public final class Player extends Character implements MovementAI {
             moving = false;
             setCurrentSpeed(0);
         }
+        assert TileManager.visible.contains(getNextBBox());
 
         // attacking
         if (keyHandler.isKeyClicked(keyHandler.attackKey) && !attacking) {

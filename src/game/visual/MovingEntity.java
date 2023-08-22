@@ -11,6 +11,7 @@ import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.function.Supplier;
 
 import static game.main.GamePanel.*;
@@ -35,19 +36,12 @@ public abstract class MovingEntity extends Entity {
      * flag indicating if the entity is moving
      */
     public boolean moving;
-    /**
-     * the current moving speed of the entity
-     */
-//    protected double currentSpeed;
-    /**
-     * the current direction in which the entity moves
-     */
-//    public @NotNull Direction direction = Direction.DOWN;
 
     /**
      * List with targets with which the entity has to collide
      */
     private final ArrayList<Rectangle> collisionTargets = new ArrayList<>();
+    public final HashSet<Entity> collisionExceptions = new HashSet<>();
 
     // DebugInfo
     private final Deque<Rectangle> targetBox = new ArrayDeque<>();
@@ -55,6 +49,7 @@ public abstract class MovingEntity extends Entity {
     protected MovingEntity(@NotNull Rectangle solidArea) {
         checkBBox(solidArea);
         bBox = solidArea;
+        collisionExceptions.add(this);
     }
 
     @Override
@@ -95,26 +90,28 @@ public abstract class MovingEntity extends Entity {
 
     public final Direction getDirection() {
         direction %= Math.TAU;
-        System.out.println(direction * 180 / Math.PI);
+//        System.out.println(direction * 180 / Math.PI);
         int div = (int) Math.round(direction / (Math.PI / 2));
-        System.out.println(div);
-        Direction out = switch (div) {
+//        System.out.println(div);
+        return switch (div) {
             case 0 -> Direction.RIGHT;
             case 1 -> Direction.DOWN;
             case 2 -> Direction.LEFT;
             case 3 -> Direction.UP;
             default -> throw new RuntimeException(Integer.toString(div));
         };
-        return out;
+    }
+    public final double getExactDirection() {
+        return direction;
     }
     public final void setDirection(Direction direction) {
-        double speed = getCurrentSpeed();
         this.direction = switch (direction) {
             case RIGHT -> 0.;
             case DOWN -> Math.PI / 2;
             case LEFT -> Math.PI;
             case UP -> 3 * Math.PI / 2;
         };
+        assert getDirection() == direction;
     }
     public final void setDirection(double direction) {
         this.direction = direction;
@@ -131,22 +128,14 @@ public abstract class MovingEntity extends Entity {
      * @return bounding box
      */
     public Rectangle getNextBBox() {
-        return getBBox(getVx(), getVx());
+        return getBBox(getVx() * tileSize / FPS, getVy() * tileSize / FPS);
     }
 
-//    private Rectangle getBBox(Direction direction, double step) {
-//        return switch (direction) {
-//            case UP -> new Rectangle((int) x + bBox.x, (int) (y - step) + bBox.y, bBox.width, bBox.height);
-//            case RIGHT -> new Rectangle((int) (x + step) + bBox.x, (int) y + bBox.y, bBox.width, bBox.height);
-//            case DOWN -> new Rectangle((int) x + bBox.x, (int) (y + step) + bBox.y, bBox.width, bBox.height);
-//            case LEFT -> new Rectangle((int) (x - step) + bBox.x, (int) y + bBox.y, bBox.width, bBox.height);
-//        };
-//    }
-    private Rectangle getBBox(double dx, double dy) {
+    protected Rectangle getBBox(double dx, double dy) {
         return new Rectangle((int)(x + dx) + bBox.x, (int)(y + dy) + bBox.y, bBox.width, bBox.height);
     }
 
-    void addCollisionTarget(Rectangle target) {
+    final void addCollisionTarget(Rectangle target) {
         collisionTargets.add(target);
     }
 
@@ -182,30 +171,17 @@ public abstract class MovingEntity extends Entity {
 
     protected void collide(ArrayList<Rectangle> collisionTargets) {}
 
-//    /**
-//     * translates the entity over a distance of &lt;step&gt;, in the direction &lt;direction&gt;
-//     * @param direction direction in which to move
-//     * @param step distance over which to move in pixels
-//     */
-//    private void move(Direction direction, double step) {
-//        switch (direction) {
-//            case UP -> y -= step;
-//            case DOWN -> y += step;
-//            case LEFT -> x -= step;
-//            case RIGHT -> x += step;
-//        }
-//    }
     /**
      * translates the entity over dx, dy;
      * @param dx step in x direction
      * @param dy step in y direction
      */
-    private void move(double dx, double dy) {
+    protected void move(double dx, double dy) {
         x += dx;
         y += dy;
     }
 
-    protected final void move() {
+    private void move() {
         game.entityManager.collisionChecker.checkTile(this);
         game.entityManager.collisionChecker.checkEntity(this);
         if (moving) {

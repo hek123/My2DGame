@@ -33,10 +33,7 @@ public class Arrow extends Projectile {
         }
     }
 
-    private final double speed = 5.5;
     public final int damage;
-
-    private final Character source;
 
     private int ctr = 0;
     private Character target = null;
@@ -54,27 +51,28 @@ public class Arrow extends Projectile {
     }
 
     public Arrow(Character source) {
-        super(getBBox(source.getDirection()));
+        super(getBBox(source.getDirection()), source, 5.5);
         animation = new MovingSprite(images, .15, 1);
 
-        Rectangle sourceBBox = source.getNextBBox();
-//        Rectangle thisSA = getSolidArea();
-        Rectangle thisSA = new Rectangle(0, 0, tileSize, tileSize);
-        switch (source.getDirection()) {
-            case LEFT -> setPosition(sourceBBox.x - thisSA.x - thisSA.width, source.getY());
-            case RIGHT -> setPosition(sourceBBox.x + sourceBBox.width - thisSA.x, source.getY());
-            case DOWN -> setPosition(source.getX(), sourceBBox.y + sourceBBox.height - thisSA.y);
-            case UP -> setPosition(source.getX(), sourceBBox.y- thisSA.height - thisSA.y);
-        }
+//        Rectangle sourceBBox = source.getNextBBox();
+////        Rectangle thisSA = getSolidArea();
+//        Rectangle thisSA = new Rectangle(0, 0, tileSize, tileSize);
+//        switch (source.getDirection()) {
+//            case LEFT -> setPosition(sourceBBox.x - thisSA.x - thisSA.width, source.getY());
+//            case RIGHT -> setPosition(sourceBBox.x + sourceBBox.width - thisSA.x, source.getY());
+//            case DOWN -> setPosition(source.getX(), sourceBBox.y + sourceBBox.height - thisSA.y);
+//            case UP -> setPosition(source.getX(), sourceBBox.y- thisSA.height - thisSA.y);
+//        }
+//
+//        game.entityManager.addMovingEntityToMap(this);
 
-        game.entityManager.addMovingEntityToMap(this);
+//        setDirection(source.getDirection());
+//        setCurrentSpeed(speed);
+//        moving = true;
 
-        setDirection(source.getDirection());
-        setCurrentSpeed(speed);
-        moving = true;
-
-        this.source = source;
         damage = source.strength;
+
+        fire(source.getExactDirection());
     }
 
     @Override

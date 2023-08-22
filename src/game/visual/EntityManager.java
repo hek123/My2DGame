@@ -131,7 +131,7 @@ public class EntityManager {
 
             if (character.isMoving()) {
                 for (Entity entity : getEntityArray()) {
-                    if (character != entity) {
+                    if (!character.collisionExceptions.contains(entity)) {
                         Rectangle entityBox = entity.getBBox();
                         if (characterBox.intersects(entityBox)) {
                             if (entity.isSolid()) {

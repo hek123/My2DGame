@@ -78,4 +78,16 @@ public class UtilityTool {
         } while (p > L);
         return k - 1;
     }
+
+    static public BufferedImage rotateImage(BufferedImage image, double angle) {
+        BufferedImage out = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+
+        Graphics2D g2d = (Graphics2D) out.getGraphics();
+        int centerX = image.getWidth() / 2, centerY = image.getHeight() / 2;
+        g2d.rotate(angle, centerX, centerY);
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+
+        return out;
+    }
 }

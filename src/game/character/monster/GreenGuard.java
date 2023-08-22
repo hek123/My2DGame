@@ -3,19 +3,20 @@ package game.character.monster;
 import Utility.ImageAnchor;
 import Utility.UtilityTool;
 import Utility.Vector2D;
+import game.character.movementAI.MovementAI;
 import game.player.Player;
+import game.projectile.GreenFireBall;
+import game.projectile.Projectile;
 import game.visual.Entity;
 import game.visual.animations.Animation;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
-import static game.main.GamePanel.FPS;
-import static game.main.GamePanel.tileSize;
+import static game.main.GamePanel.*;
 
-public class GreenGuard extends Monster {
+public class GreenGuard extends Monster implements MovementAI {
     static final private int nbSprites = 6;
     static final private ImageAnchor[] sprites = new ImageAnchor[nbSprites];
 
@@ -26,6 +27,8 @@ public class GreenGuard extends Monster {
             sprites[i] = new ImageAnchor(spriteImages.getSubimage(i * width, 0, width, height), new Vector2D(0, tileSize));
         }
     }
+
+    private int ctr = 0;
 
     public GreenGuard() {
         super(new Rectangle(tileSize, tileSize));
@@ -38,7 +41,7 @@ public class GreenGuard extends Monster {
         speed = 0;
         strength = 2;
 
-        movementAI = null;
+        movementAI = this;
         animation = new SimpleAnimation(nbSprites, 10, SimpleAnimation.Type.backNForth);
     }
 
@@ -57,6 +60,16 @@ public class GreenGuard extends Monster {
         if (entity instanceof Player player) {
             player.receiveDamageFrom(passiveDamage, this);
         }
+    }
+
+    @Override
+    public void updateAI() {
+        if (ctr > 2 * FPS) {
+            System.out.println("fireball!!");
+            new GreenFireBall(2., Projectile.angleTowards(this, game.player), this);
+            ctr = 0;
+        }
+        ctr++;
     }
 
     protected class SimpleAnimation extends EntityAnimation {

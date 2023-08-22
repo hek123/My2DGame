@@ -88,6 +88,10 @@ public abstract class Entity implements Solid {
      */
     abstract public void setPosition(int x, int y);
 
+    public Vector2D getCenterPos() {
+        return new Vector2D((int) getBBox().getCenterX(), (int) getBBox().getCenterY());
+    }
+
     public void attackedBy(Character character) {}
 
     public final void drawImage(Graphics2D g2d, Vector2D framePos, ImageAnchor imageAnchor) {
