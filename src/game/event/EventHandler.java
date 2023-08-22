@@ -40,7 +40,7 @@ public class EventHandler {
         eventBox.y += event.y * GamePanel.tileSize;
 
         if (playerBox.intersects(eventBox)) {
-            return game.player.direction == reqDirection;
+            return game.player.getDirection() == reqDirection;
         }
 
         return false;

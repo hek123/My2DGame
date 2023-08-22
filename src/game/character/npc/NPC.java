@@ -16,12 +16,12 @@ public abstract class NPC extends Character {
     }
 
     public void speak(Player player) {
-        switch (player.direction) {
-            case UP -> direction = Direction.DOWN;
-            case DOWN -> direction = Direction.UP;
-            case LEFT -> direction = Direction.RIGHT;
-            case RIGHT -> direction = Direction.LEFT;
-        }
+        setDirection(switch (player.getDirection()) {
+            case UP -> Direction.DOWN;
+            case DOWN -> Direction.UP;
+            case LEFT -> Direction.RIGHT;
+            case RIGHT -> Direction.LEFT;
+        });
     }
 
     @Override

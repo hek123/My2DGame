@@ -11,7 +11,7 @@ public class DamagePit extends Event {
 
     @Override
     public void action() {
-        game.ui.dialogue("you fall into a pit", game.player.getBBox(), game.player.direction);
+        game.ui.dialogue("you fall into a pit", game.player.getBBox(), game.player.getDirection());
         game.player.receiveDamageFrom(1, null);
     }
 }

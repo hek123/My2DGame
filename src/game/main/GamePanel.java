@@ -1,17 +1,22 @@
 package game.main;
 
+import Utility.UtilityTool;
 import Utility.Vector2D;
 import game.ui.MouseHandler;
 import game.ui.Scalable;
 import main.Sound;
 
+import javax.crypto.Cipher;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.beans.PropertyChangeListener;
 
 
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements Scalable {
     // SCREEN SETTINGS
     static public final int originalTileSize = 16; // 16x16 game.tile
     static public final int scale = 3;
@@ -22,6 +27,9 @@ public class GamePanel extends JPanel {
 
     static public final Dimension initialSize = new Dimension(16 * tileSize, 12 * tileSize);
 
+    // GRAPHICS
+    private final JButton pauseButton;
+
     // BACKGROUND STUFF
     static public final MyKeyHandler keyHandler = new MyKeyHandler();
     static public final MouseHandler mouseHandler = new MouseHandler();
@@ -30,10 +38,10 @@ public class GamePanel extends JPanel {
 
     public GamePanel() {
         super(true);  // Provides better rendering performance
+        setLayout(null);
 
         setPreferredSize(initialSize);
         setMinimumSize(initialSize);
-        setBackground(Color.black);
 
         setEnabled(true);
 
@@ -48,9 +56,25 @@ public class GamePanel extends JPanel {
 
         setFocusable(false);
 
+        pauseButton = new JButton(UtilityTool.loadIcon("/pauseButton.png"));
+        System.out.println(pauseButton.getPreferredSize());
+        pauseButton.setSize(24, 24);
+        pauseButton.setBorder(null);
+        pauseButton.addActionListener((e) -> game.toggleOptions());
+        pauseButton.setFocusable(false);
+        add(pauseButton);
+
+//        JLabel lb = new JLabel();
+//        lb.setOpaque(true);
+//        lb.setBackground(Color.red);
+//        lb.setBounds(100, 100, 200, 200);
+//        add(lb);
+
         mouseHandler.gamePanel = this;
 
         Sound.loadSound();
+
+        scalableList.add(this);
     }
 
     public void startNewGame() {
@@ -73,14 +97,18 @@ public class GamePanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
         if (Game.gameState != GameState.FINISHED) {
             Graphics2D g2d = (Graphics2D) g;
 
             game.draw(g2d, new Vector2D(game.tileManager.framePosition));
+            super.paintChildren(g);
 
             g2d.dispose(); // Good practice to save some memory
         }
+    }
+
+    @Override
+    public void set(Dimension dimension) {
+        pauseButton.setLocation(dimension.width - pauseButton.getWidth() - 5, 5);
     }
 }

@@ -28,7 +28,7 @@ public class ObjectDoor extends SuperObject {
         if (player.inventory.getItem(ObjectKey.class.getName()) != null) {
             game.entityManager.removeEntityFromMap(this);
         } else {
-            game.ui.dialogue("need a key to open door!", this.getBBox(), player.direction);
+            game.ui.dialogue("need a key to open door!", this.getBBox(), player.getDirection());
         }
     }
 

@@ -46,15 +46,15 @@ public class FireBall extends Projectile implements Magic {
         Rectangle sourceBBox = source.getNextBBox();
 //        Rectangle thisSA = getSolidArea();
         Rectangle thisSA = new Rectangle(0, 0, tileSize, tileSize);
-        switch (source.direction) {
+        switch (source.getDirection()) {
             case LEFT -> setPosition(sourceBBox.x - thisSA.x - thisSA.width, source.getY());
             case RIGHT -> setPosition(sourceBBox.x + sourceBBox.width - thisSA.x, source.getY());
             case DOWN -> setPosition(source.getX(), sourceBBox.y + sourceBBox.height - thisSA.y);
             case UP -> setPosition(source.getX(), sourceBBox.y- thisSA.height - thisSA.y);
         }
 
-        direction = source.direction;
-        currentSpeed = speed;
+        setDirection(source.getDirection());
+        setCurrentSpeed(speed);
         moving = true;
 
         game.entityManager.addMovingEntityToMap(this);
@@ -74,7 +74,7 @@ public class FireBall extends Projectile implements Magic {
     @Override
     public void entityInteraction(Entity entity) {
         if (entity instanceof Player) {
-            currentSpeed = speed;
+            setCurrentSpeed(speed);
             moving = true;
             System.err.println("Fireball hit Player");
         } else if (entity instanceof Character character) {

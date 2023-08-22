@@ -1,11 +1,11 @@
 package game.main;
 
 import main.BaseKeyAdapter;
+import main.Main;
 
 import java.awt.event.KeyEvent;
 
 import static game.main.GamePanel.game;
-import static main.Main.optionPanel;
 
 
 public class MyKeyHandler extends BaseKeyAdapter {
@@ -42,9 +42,14 @@ public class MyKeyHandler extends BaseKeyAdapter {
                 }
             }
         }
-        if (optionPanel.visible) {
-            if (isKeyClicked(KeyEvent.VK_M))
-                optionPanel.hideO();
+        if (isKeyClicked(KeyEvent.VK_M)) {
+            game.toggleOptions();
         }
+        if (isKeyClicked(KeyEvent.VK_ESCAPE)) Main.goToMainMenu();
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
     }
 }

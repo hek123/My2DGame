@@ -28,17 +28,21 @@ public abstract class MovingEntity extends Entity {
      */
     private double x, y;
     /**
+     * The current speed in x and y direction
+     */
+    private double speed, direction;
+    /**
      * flag indicating if the entity is moving
      */
     public boolean moving;
     /**
      * the current moving speed of the entity
      */
-    protected double currentSpeed;
+//    protected double currentSpeed;
     /**
      * the current direction in which the entity moves
      */
-    public @NotNull Direction direction = Direction.DOWN;
+//    public @NotNull Direction direction = Direction.DOWN;
 
     /**
      * List with targets with which the entity has to collide
@@ -79,7 +83,47 @@ public abstract class MovingEntity extends Entity {
      * @return true if the entity is moving
      */
     public final boolean isMoving() {
-        return moving & currentSpeed > 0;
+        return moving && speed > 0;
+    }
+
+    public final double getVx() {
+        return speed * Math.cos(direction);
+    }
+    public final double getVy() {
+        return speed * Math.sin(direction);
+    }
+
+    public final Direction getDirection() {
+        direction %= Math.TAU;
+        System.out.println(direction * 180 / Math.PI);
+        int div = (int) Math.round(direction / (Math.PI / 2));
+        System.out.println(div);
+        Direction out = switch (div) {
+            case 0 -> Direction.RIGHT;
+            case 1 -> Direction.DOWN;
+            case 2 -> Direction.LEFT;
+            case 3 -> Direction.UP;
+            default -> throw new RuntimeException(Integer.toString(div));
+        };
+        return out;
+    }
+    public final void setDirection(Direction direction) {
+        double speed = getCurrentSpeed();
+        this.direction = switch (direction) {
+            case RIGHT -> 0.;
+            case DOWN -> Math.PI / 2;
+            case LEFT -> Math.PI;
+            case UP -> 3 * Math.PI / 2;
+        };
+    }
+    public final void setDirection(double direction) {
+        this.direction = direction;
+    }
+    public final double getCurrentSpeed() {
+        return speed;
+    }
+    public final void setCurrentSpeed(double speed) {
+        this.speed = speed;
     }
 
     /**
@@ -87,18 +131,19 @@ public abstract class MovingEntity extends Entity {
      * @return bounding box
      */
     public Rectangle getNextBBox() {
-        return getBBox(direction, currentSpeed * tileSize / FPS);
+        return getBBox(getVx(), getVx());
     }
 
-    private Rectangle getBBox(Direction direction, double step) {
-        Rectangle out = null;
-        switch (direction) {
-            case UP -> out = new Rectangle((int) x + bBox.x, (int) (y - step) + bBox.y, bBox.width, bBox.height);
-            case RIGHT -> out = new Rectangle((int) (x + step) + bBox.x, (int) y + bBox.y, bBox.width, bBox.height);
-            case DOWN -> out = new Rectangle((int) x + bBox.x, (int) (y + step) + bBox.y, bBox.width, bBox.height);
-            case LEFT -> out = new Rectangle((int) (x - step) + bBox.x, (int) y + bBox.y, bBox.width, bBox.height);
-        }
-        return out;
+//    private Rectangle getBBox(Direction direction, double step) {
+//        return switch (direction) {
+//            case UP -> new Rectangle((int) x + bBox.x, (int) (y - step) + bBox.y, bBox.width, bBox.height);
+//            case RIGHT -> new Rectangle((int) (x + step) + bBox.x, (int) y + bBox.y, bBox.width, bBox.height);
+//            case DOWN -> new Rectangle((int) x + bBox.x, (int) (y + step) + bBox.y, bBox.width, bBox.height);
+//            case LEFT -> new Rectangle((int) (x - step) + bBox.x, (int) y + bBox.y, bBox.width, bBox.height);
+//        };
+//    }
+    private Rectangle getBBox(double dx, double dy) {
+        return new Rectangle((int)(x + dx) + bBox.x, (int)(y + dy) + bBox.y, bBox.width, bBox.height);
     }
 
     void addCollisionTarget(Rectangle target) {
@@ -110,13 +155,15 @@ public abstract class MovingEntity extends Entity {
      */
     private void collide() {
         assert  !collisionTargets.isEmpty();
-        currentSpeed = 0;
+        double vx_n = Math.cos(direction), vy_n = Math.sin(direction);
+        speed = 0;
+
         targetBox.addAll(collisionTargets);
 
         setPosition(getX(), getY());
 
         Supplier<Boolean> hasCollided = () -> {
-            Rectangle nextBBox = getBBox(direction, 1);
+            Rectangle nextBBox = getBBox(vx_n, vy_n);
             for (Rectangle target : collisionTargets) {
                 if (target.intersects(nextBBox))
                     return true;
@@ -125,7 +172,7 @@ public abstract class MovingEntity extends Entity {
         };
 
         while (!hasCollided.get()) {
-            move(direction, 1);
+            move(vx_n, vy_n);
         }
 
         collide(collisionTargets);
@@ -135,18 +182,27 @@ public abstract class MovingEntity extends Entity {
 
     protected void collide(ArrayList<Rectangle> collisionTargets) {}
 
+//    /**
+//     * translates the entity over a distance of &lt;step&gt;, in the direction &lt;direction&gt;
+//     * @param direction direction in which to move
+//     * @param step distance over which to move in pixels
+//     */
+//    private void move(Direction direction, double step) {
+//        switch (direction) {
+//            case UP -> y -= step;
+//            case DOWN -> y += step;
+//            case LEFT -> x -= step;
+//            case RIGHT -> x += step;
+//        }
+//    }
     /**
-     * translates the entity over a distance of &lt;step&gt;, in the direction &lt;direction&gt;
-     * @param direction direction in which to move
-     * @param step distance over which to move in pixels
+     * translates the entity over dx, dy;
+     * @param dx step in x direction
+     * @param dy step in y direction
      */
-    private void move(Direction direction, double step) {
-        switch (direction) {
-            case UP -> y -= step;
-            case DOWN -> y += step;
-            case LEFT -> x -= step;
-            case RIGHT -> x += step;
-        }
+    private void move(double dx, double dy) {
+        x += dx;
+        y += dy;
     }
 
     protected final void move() {
@@ -154,7 +210,7 @@ public abstract class MovingEntity extends Entity {
         game.entityManager.collisionChecker.checkEntity(this);
         if (moving) {
             if (collisionTargets.isEmpty())
-                move(direction, currentSpeed * tileSize / FPS);
+                move(getVx() * tileSize / FPS, getVy() * tileSize / FPS);
             else
                 collide();
         }
@@ -244,7 +300,7 @@ public abstract class MovingEntity extends Entity {
 
         @Override
         public void drawA(Graphics2D g2d, Vector2D framePos) {
-            drawImage(g2d, framePos, spriteImages[MovingEntity.dirToInt(direction)][currentSprite]);
+            drawImage(g2d, framePos, spriteImages[MovingEntity.dirToInt(getDirection())][currentSprite]);
         }
     }
 

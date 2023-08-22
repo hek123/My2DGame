@@ -44,6 +44,7 @@ public class Main extends JFrame {
             public void componentResized(ComponentEvent e) {
                 Dimension dimension = e.getComponent().getSize();
                 gamePanel.setSize(dimension);
+                optionPanel.setSize(dimension);
                 Scalable.scaleAllWindows(dimension);
             }
         });
@@ -53,7 +54,7 @@ public class Main extends JFrame {
         optionPanel.setFocusable(false);
 
         layeredPane.add(gamePanel, 0);
-        layeredPane.add(optionPanel, 1);
+        layeredPane.add(optionPanel, 0);
 
         cardPanel.add(layeredPane, game);
 
@@ -65,7 +66,8 @@ public class Main extends JFrame {
         setEnabled(true);
         setVisible(true);
 
-        goToMainMenu();
+//        goToMainMenu();
+        startGame();
     }
 
     private static void showPanel(String card_panel) {
@@ -82,6 +84,8 @@ public class Main extends JFrame {
     public static void startGame() {
         showPanel(game);
         layeredPane.requestFocus();
+
+        optionPanel.reset();
 
         gamePanel.startNewGame();
     }
@@ -118,7 +122,6 @@ class MainPanel extends JPanel {
         add(title, c);
 
         JComponent center = createCenterButtons();
-
         c.gridx = 1;
         c.gridy = 1;
         c.gridwidth = 1;
@@ -135,21 +138,22 @@ class MainPanel extends JPanel {
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = GridBagConstraints.RELATIVE;
+        c.ipadx = 50;
+        c.ipady = 10;
+        c.insets = new Insets(2, 0, 2, 0);
 
         Button play = new MainButton("Play");
         play.addActionListener(e -> Main.startGame());
         Button settings = new MainButton("Settings");
         Button exit = new MainButton("Exit");
         exit.addActionListener(e -> Main.exit());
-        c.gridx = 0;
-        c.gridy = 0;
+
         center.add(play, c);
-        c.gridy++;
         center.add(settings, c);
-        c.gridy++;
         center.add(exit, c);
-        c.gridy++;
-        c.insets = new Insets(10, 0, 0, 0);
+        c.insets.top += 10;
         center.add(new MainButton("TileEditor"), c);
         return center;
     }

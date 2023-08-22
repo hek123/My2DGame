@@ -31,7 +31,7 @@ public class TileManager implements ImmutableMap2D<Vector2D>, Scalable {
                         if (player.inventory.getItem(ObjectKey.class.getName()) != null) {
                             game.tileManager.tileMap[i][j] = TileManager.grass;
                         } else {
-                            game.ui.dialogue("need a key to open door!", new Rectangle(i * tileSize, j * tileSize, tileSize, tileSize), player.direction);
+                            game.ui.dialogue("need a key to open door!", new Rectangle(i * tileSize, j * tileSize, tileSize, tileSize), player.getDirection());
                         }
                     }
                 },

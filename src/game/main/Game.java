@@ -7,13 +7,10 @@ import game.tile.TileManager;
 import game.ui.Scalable;
 import game.ui.UI;
 import game.visual.EntityManager;
-import main.Main;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static game.main.GamePanel.*;
 import static main.Main.gamePanel;
@@ -33,6 +30,7 @@ public class Game {
     private AssetSetter assetSetter;
 
     private ScheduledThreadPoolExecutor gameThread;
+    private ScheduledFuture<?> scheduledFuture;
     public long nanoTime;
     private int fpsUpdateCtr = 0;
 
@@ -66,28 +64,45 @@ public class Game {
         tileManager.update();
 
         gameThread = new ScheduledThreadPoolExecutor(1);
-        gameThread.scheduleAtFixedRate(this::gameLoop, 0, 1_000_000_000 / FPS, TimeUnit.NANOSECONDS);
+        startGameLoop();
+    }
+
+    private void startGameLoop() {
+        scheduledFuture = gameThread.scheduleAtFixedRate(this::gameLoop, 0, 1_000_000_000 / FPS, TimeUnit.NANOSECONDS);
+    }
+    private void stopGameLoop() {
+        scheduledFuture.cancel(false);
+        try {
+            scheduledFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (CancellationException e) {
+            System.out.println("stopped GameLoop");
+        }
     }
 
     public void stopGame() {
         entityManager.clearMap();
 
-        gameThread.shutdown();
+        stopGameLoop();
 
         gameState = GameState.FINISHED;
+    }
+
+    public void pauseGame(boolean pause) {
+        if (pause) {
+            assert !scheduledFuture.isCancelled();
+            stopGameLoop();
+        } else {
+            assert scheduledFuture.isCancelled();
+            startGameLoop();
+        }
     }
 
     public void gameLoop() {
 //        System.out.println("Game loop is Running!");
         // 1) UPDATE: update information such as character position
         update();
-        if (!optionPanel.visible)
-            if (keyHandler.isKeyClicked(KeyEvent.VK_M))
-                optionPanel.showO();
-        if (keyHandler.isKeyPressed(KeyEvent.VK_ESCAPE)) {
-            System.out.println("esc");
-            Main.goToMainMenu();
-        }
 
         // 2) DRAW: draw the screen with the updated information
         gamePanel.repaint();
@@ -121,6 +136,7 @@ public class Game {
     }
 
     void draw(Graphics2D g2d, Vector2D framePos) {
+//        System.out.println("Paint");
         tileManager.draw(g2d, framePos);
 
         entityManager.drawAnimations(g2d, framePos);
@@ -131,5 +147,10 @@ public class Game {
         }
 
         ui.draw(g2d);
+    }
+
+    public void toggleOptions() {
+        game.pauseGame(!optionPanel.visible);
+        optionPanel.toggle();
     }
 }

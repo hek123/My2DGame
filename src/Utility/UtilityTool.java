@@ -4,9 +4,11 @@ import game.main.GamePanel;
 import game.tile.TileManager;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
 
 public class UtilityTool {
@@ -18,39 +20,44 @@ public class UtilityTool {
         return scaledImage;
     }
 
+    static public BufferedImage loadImage(String path) throws IOException {
+        Class<UtilityTool> classLoader = UtilityTool.class;
+        // load the image
+        return ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream(path)));
+    }
+
     static public BufferedImage loadScaledImage(String path) {
         return loadScaledImage(path, GamePanel.tileSize, GamePanel.tileSize);
     }
-
     static public BufferedImage loadScaledImage(String path, int width, int height) {
-        BufferedImage image = null;
         try {
-            Class<UtilityTool> classLoader = UtilityTool.class;
-            // load the image
-            image = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream(path)));
-            // and scale it to the correct format
-            image = UtilityTool.scaleImage(image, width, height);
+            // load and scale the image to the correct format
+            return UtilityTool.scaleImage(loadImage(path), width, height);
         } catch (IOException e) {
             System.out.println(path);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return image;
     }
-
     static public BufferedImage loadAutoScaledImage(String path) {
-        BufferedImage image = null;
         try {
-            Class<UtilityTool> classLoader = UtilityTool.class;
             // load the image
-            image = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream(path)));
+            BufferedImage image = loadImage(path);
             int width = image.getWidth(), height = image.getHeight();
             // and scale it to the correct format
             image = UtilityTool.scaleImage(image, width * GamePanel.scale, height * GamePanel.scale);
+            return image;
         } catch (IOException e) {
             System.out.println(path);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return image;
+    }
+
+    static public ImageIcon loadIcon(String path) {
+        URL imgURL = UtilityTool.class.getResource(path);
+        return new ImageIcon(Objects.requireNonNull(imgURL));
+    }
+    static public ImageIcon loadIcon(String path, int width, int height) {
+        return new ImageIcon(loadScaledImage(path, width, height));
     }
 
     static public int getTextWidth(String text, Graphics2D g2d) {

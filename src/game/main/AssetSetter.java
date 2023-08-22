@@ -47,5 +47,7 @@ public class AssetSetter {
         setEntity(11, 30, GreenSlime.class);
 
         setEntity(25, 20, SkeletonLord.class);
+
+        setEntity(20, 7, GreenGuard.class);
     }
 }

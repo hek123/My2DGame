@@ -34,7 +34,7 @@ public abstract class Monster extends Character {
     @Override
     public void killedBy(Character character) {
         solid = false;
-        currentSpeed = 0;
+        setCurrentSpeed(0);
         moving = false;
 
         animation = new DyingAnimation(animation);

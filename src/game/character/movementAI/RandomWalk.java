@@ -38,21 +38,21 @@ public class RandomWalk implements MovementAI, TerritoryBound {
 
     @Override
     public void updateAI() {
-        if (character.moving) character.setSpeed(character.speed);
+        if (character.moving) character.setCurrentSpeed(character.speed);
         if (actionCounter >= actionUpdatePeriod) {
             character.moving = true;
             actionCounter = 0;
             actionUpdatePeriod = UtilityTool.getRandomPoissonSample(lambda);
             int i = randomDirection.nextInt(dirStates);
             switch (i) {
-                case 1 -> character.direction = Direction.UP;
-                case 2 -> character.direction = Direction.DOWN;
-                case 3 -> character.direction = Direction.LEFT;
-                case 0 -> character.direction = Direction.RIGHT;
+                case 1 -> character.setDirection(Direction.UP);
+                case 2 -> character.setDirection(Direction.DOWN);
+                case 3 -> character.setDirection(Direction.LEFT);
+                case 0 -> character.setDirection(Direction.RIGHT);
                 case 4 -> {
                     System.out.println("stand still");
                     character.moving = false;
-                    character.setSpeed(0);
+                    character.setCurrentSpeed(0);
                 }
             }
         }
@@ -60,12 +60,12 @@ public class RandomWalk implements MovementAI, TerritoryBound {
 
         if (territory != null) {
             if (!territory.contains(character.getNextBBox())) {
-                switch (character.direction) {
-                    case DOWN -> character.direction = Direction.UP;
-                    case UP -> character.direction = Direction.DOWN;
-                    case RIGHT -> character.direction = Direction.LEFT;
-                    case LEFT -> character.direction = Direction.RIGHT;
-                }
+                character.setDirection(switch (character.getDirection()) {
+                    case DOWN -> Direction.UP;
+                    case UP -> Direction.DOWN;
+                    case RIGHT -> Direction.LEFT;
+                    case LEFT -> Direction.RIGHT;
+                });
                 assert territory.contains(character.getNextBBox());
                 actionCounter = 0;
             }

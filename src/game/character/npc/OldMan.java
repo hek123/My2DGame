@@ -48,7 +48,7 @@ public class OldMan extends NPC {
         super.speak(player);
 
         dialogueIdx %= 2;
-        game.ui.dialogue(dialogues[dialogueIdx], this.getBBox(), player.direction);
+        game.ui.dialogue(dialogues[dialogueIdx], this.getBBox(), player.getDirection());
         dialogueIdx++;
     }
 }

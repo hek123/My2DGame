@@ -38,7 +38,7 @@ public class GreenSlime extends Monster {
     @Override
     public void receiveDamageFrom(int damage, Character source) {
         super.receiveDamageFrom(damage, source);
-        direction = source.direction;
+        setDirection(source.getDirection());
     }
 
     @Override

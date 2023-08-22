@@ -27,7 +27,7 @@ public class ObjectKey extends SuperObject implements Item {
             game.ui.scrollingMessage("get Key");
         } else {
             if (msgTimer == 0) {
-                game.ui.dialogue("inventory is full", this.getBBox(), player.direction);
+                game.ui.dialogue("inventory is full", this.getBBox(), player.getDirection());
             } else if (msgTimer >= 30) {
                 msgTimer = 0;
             }

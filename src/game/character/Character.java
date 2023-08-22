@@ -7,7 +7,6 @@ import game.character.movementAI.MovementAI;
 import game.character.movementAI.TerritoryBound;
 import game.visual.MovingEntity;
 import game.visual.animations.Animation;
-import game.visual.animations.Particle;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -41,12 +40,12 @@ public abstract class Character extends MovingEntity {
     protected Character(Rectangle BBox) {
         super(BBox);
 
-        direction = Direction.DOWN;
+        setDirection(Direction.DOWN);
     }
 
-    public void setSpeed(double speed) {
-        currentSpeed = speed;
-    }
+//    public void setSpeed(double speed) {
+//        currentSpeed = speed;
+//    }
 
     @Override
     public void drawDebugInfo(Graphics2D g2d, Vector2D framePos) {
@@ -90,7 +89,7 @@ public abstract class Character extends MovingEntity {
         if (dying)
             System.err.println("The dead are walking!");
 
-        movementAI.updateAI();
+        if (movementAI != null) movementAI.updateAI();
 
         if (invincible) {
             damageCoolDownCounter++;

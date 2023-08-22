@@ -96,19 +96,19 @@ public final class Player extends Character implements MovementAI {
 
     public void updateAI() {
         // movement
-        currentSpeed = keyHandler.isKeyPressed(KeyEvent.VK_SHIFT) ? 1 : speed;
+        setCurrentSpeed(keyHandler.isKeyPressed(KeyEvent.VK_SHIFT) ? 1 : speed);
         moving = true;
         if (keyHandler.isKeyPressed(keyHandler.upKey)) {
-            direction = Direction.UP;
+            setDirection(Direction.UP);
         } else if (keyHandler.isKeyPressed(keyHandler.downKey)) {
-            direction = Direction.DOWN;
+            setDirection(Direction.DOWN);
         } else if (keyHandler.isKeyPressed(keyHandler.rightKey)) {
-            direction = Direction.RIGHT;
+            setDirection(Direction.RIGHT);
         } else if (keyHandler.isKeyPressed(keyHandler.leftKey)) {
-            direction = Direction.LEFT;
+            setDirection(Direction.LEFT);
         } else {
             moving = false;
-            currentSpeed = 0;
+            setCurrentSpeed(0);
         }
 
         // attacking
@@ -192,7 +192,7 @@ public final class Player extends Character implements MovementAI {
     }
 
     public Rectangle getAttackRange() {
-        return new Rectangle(attackRange[dirToInt(direction)]);
+        return new Rectangle(attackRange[dirToInt(getDirection())]);
     }
 
 
@@ -219,7 +219,7 @@ public final class Player extends Character implements MovementAI {
 
         @Override
         public void drawA(Graphics2D g2d, Vector2D framePos) {
-            drawImage(g2d, framePos, spriteImages[1][dirToInt(direction)][currentSprite]);
+            drawImage(g2d, framePos, spriteImages[1][dirToInt(getDirection())][currentSprite]);
         }
     }
 }
