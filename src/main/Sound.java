@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: SE volume, fix SE
 public class Sound {
     static private Clip music, soundEffect;
     static private FloatControl floatControl;
@@ -66,6 +67,7 @@ public class Sound {
     static public void playMusic(String musicName) {
         music = setFile(musicName);
         floatControl = (FloatControl) music.getControl(FloatControl.Type.MASTER_GAIN);
+        setVolume(Main.mainConfig.getMusicVolume());
         music.start();
         music.loop(Clip.LOOP_CONTINUOUSLY);
     }
@@ -76,9 +78,11 @@ public class Sound {
     }
 
     static public void setVolume(int volume) {
-        float fcVolume = -40 + 46 * ((float)volume / 100);
-        System.out.println("set gain to " + fcVolume + "dB");
-        floatControl.setValue(fcVolume);
+        if (floatControl != null) {
+            float fcVolume = -40 + 46 * ((float) volume / 100);
+            System.out.println("set gain to " + fcVolume + "dB");
+            floatControl.setValue(fcVolume);
+        }
     }
 
     static public void playSoundEffect(String sound) {

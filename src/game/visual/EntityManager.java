@@ -50,6 +50,13 @@ public class EntityManager {
         for (Animation animation: getSortedAnimationsArray()) {
             if (animation.isVisible(TileManager.visible))
                 animation.drawA(g2d, framePos);
+            else if (animation instanceof Entity.EntityAnimation entityAnimation) {
+                Entity entity = entityAnimation.getEntity();
+                if (entity.removeIfInvisible) {
+                    if (entity instanceof MovingEntity movingEntity) removeMovingEntityFromMap(movingEntity);
+                    else removeEntityFromMap(entity);
+                }
+            }
         }
     }
 
@@ -113,7 +120,7 @@ public class EntityManager {
                 int[][] corners = {{x1, y1}, {x1, y2}, {x2, y1}, {x2, y2}};
 
                 for (int i = 0; i < 4; i++) {
-                    Tile tile = game.tileManager.getElement(corners[i][0], corners[i][1]);
+                    Tile tile = game.tileManager.tileMap.getTile(corners[i][0], corners[i][1]);
                     Rectangle tileBounds = new Rectangle(corners[i][0] * GamePanel.tileSize, corners[i][1] * GamePanel.tileSize, GamePanel.tileSize, GamePanel.tileSize);
 
                     if (bBox.intersects(tileBounds) && tile.solid) {
@@ -165,7 +172,7 @@ public class EntityManager {
             int[][] corners = {{x1, y1}, {x1, y2}, {x2, y1}, {x2, y2}};
 
             for (int i = 0; i < 4; i++) {
-                Tile tile = game.tileManager.getElement(corners[i][0], corners[i][1]);
+                Tile tile = game.tileManager.tileMap.getTile(corners[i][0], corners[i][1]);
                 Rectangle tileBounds = new Rectangle(corners[i][0] * GamePanel.tileSize, corners[i][1] * GamePanel.tileSize, GamePanel.tileSize, GamePanel.tileSize);
 
                 if (bBox.intersects(tileBounds) && tile.solid) {
@@ -187,7 +194,7 @@ public class EntityManager {
         }
 
         private boolean checkSolid(int x, int y) {
-            boolean solid = game.tileManager.getElement(x, y).isSolid();
+            boolean solid = game.tileManager.tileMap.getTile(x, y).isSolid();
             if (solid) return true;
 
             for (Entity entity: entities) {

@@ -59,8 +59,8 @@ public abstract class Entity implements Solid {
      * true if entity is always displayed on the background
      */
     public boolean background;
-
     public boolean removeIfInvisible = false;
+
     public Animation animation;
 
     /**
@@ -121,6 +121,10 @@ public abstract class Entity implements Solid {
         @Override
         public final boolean isVisible(Rectangle screenBounds) {
             return screenBounds.intersects(getBBox());
+        }
+
+        public final Entity getEntity() {
+            return Entity.this;
         }
     }
 }

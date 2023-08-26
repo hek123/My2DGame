@@ -1,5 +1,6 @@
 package main;
 
+import TileEditor.TileEditorPanel;
 import game.main.GamePanel;
 import game.main.OptionPanel;
 import game.ui.Scalable;
@@ -8,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.IOException;
 
 import static game.main.GamePanel.*;
 
@@ -16,6 +18,8 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         new Main();
     }
+
+    public static final MainConfig mainConfig = new MainConfig();
 
     private static final CardLayout cardLayout = new CardLayout();
     private static final JPanel cardPanel = new JPanel(cardLayout);
@@ -26,7 +30,9 @@ public class Main extends JFrame {
     public static final GamePanel gamePanel = new GamePanel();
     public static final OptionPanel optionPanel = new OptionPanel();
 
-    private static final String game = "game", main = "main";
+    private static final TileEditorPanel tilePanel = new TileEditorPanel();
+
+    private static final String game = "game", main = "main", tileEditor = "te";
 
     Main() {
         super("2D Adventure");
@@ -35,8 +41,10 @@ public class Main extends JFrame {
 
         cardPanel.setPreferredSize(initialSize);
 
+        // Main Panel
         cardPanel.add(mainPanel, main);
 
+        // Game Panel
         layeredPane.addKeyListener(keyHandler);
         layeredPane.addMouseListener(mouseHandler);
         layeredPane.addComponentListener(new ComponentAdapter() {
@@ -58,6 +66,9 @@ public class Main extends JFrame {
 
         cardPanel.add(layeredPane, game);
 
+        // Tile Editor
+        cardPanel.add(tilePanel, tileEditor);
+
         add(cardPanel);
 
         pack();
@@ -67,7 +78,8 @@ public class Main extends JFrame {
         setVisible(true);
 
 //        goToMainMenu();
-        startGame();
+//        startGame();
+        openTileEditor();
     }
 
     private static void showPanel(String card_panel) {
@@ -90,8 +102,20 @@ public class Main extends JFrame {
         gamePanel.startNewGame();
     }
 
+    public static void openTileEditor() {
+        showPanel(tileEditor);
+        tilePanel.requestFocus();
+    }
+
     public static void exit() {
         gamePanel.stopGame();
+
+        try {
+            mainConfig.saveConfig();
+        } catch (IOException e) {
+            System.out.println("Failed to save config");
+            e.printStackTrace();
+        }
 
         System.out.println("exit");
         System.exit(0);
@@ -154,7 +178,9 @@ class MainPanel extends JPanel {
         center.add(settings, c);
         center.add(exit, c);
         c.insets.top += 10;
-        center.add(new MainButton("TileEditor"), c);
+        Button te = new MainButton("TileEditor");
+        te.addActionListener(e -> Main.openTileEditor());
+        center.add(te, c);
         return center;
     }
 

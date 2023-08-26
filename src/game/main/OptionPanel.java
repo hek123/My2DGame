@@ -1,7 +1,6 @@
 package game.main;
 
 import main.Main;
-import main.Sound;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,10 +39,10 @@ public class OptionPanel extends JPanel {
         c.gridx = 0;
         c.gridy = 0;
         frame.add(volumeText, c);
-        JSlider volumeSlider = new OptSlider(0, 100, 87);
+        JSlider volumeSlider = new OptSlider(0, 100, Main.mainConfig.getMusicVolume());
         volumeSlider.addChangeListener(e -> {
             JSlider source = (JSlider) e.getSource();
-            Sound.setVolume(source.getValue());
+            Main.mainConfig.setMusicVolume(source.getValue());
         });
         c.gridx = 1;
         frame.add(volumeSlider, c);

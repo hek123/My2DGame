@@ -8,33 +8,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Tile implements Solid {
-    static private final String tileFolder = "/tiles/";
-    public static final Map<Integer, Tile> tiles = new HashMap<>();
-
-
+    public final String name;
+    public final int idx;
     public final BufferedImage image;
-    public boolean solid = false;
+    public final boolean solid;
 
     public final CollisionInteraction collisionInteraction;
     public final AttackInteraction attackInteraction = null;
 
-    Tile(String tile, int number, CollisionInteraction collisionInteraction) {
-        image = UtilityTool.loadScaledImage(tileFolder + tile + ".png");
+    public Tile(String name, BufferedImage image, boolean solid, int number, CollisionInteraction collisionInteraction) {
+        this.name = name;
+        this.image = image;
+        this.solid = solid;
 
-        assert !tiles.containsKey(number);
-        tiles.put(number, this);
+        idx = number;
 
         this.collisionInteraction = collisionInteraction;
     }
 
-    Tile(String tile, int number, CollisionInteraction collisionInteraction, boolean solid) {
-        this(tile, number, collisionInteraction);
-        this.solid = solid;
-    }
-
-    Tile(String tile, int number, boolean solid) {
-        this(tile, number, null);
-        this.solid = solid;
+    public Tile(String name, BufferedImage image, boolean solid, int number) {
+        this(name, image, solid, number, null);
     }
 
     @Override

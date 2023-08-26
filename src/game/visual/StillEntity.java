@@ -61,5 +61,4 @@ public abstract class StillEntity extends Entity {
             drawImage(g2d, framePos, imageAnchor);
         }
     }
-
 }

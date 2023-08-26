@@ -158,7 +158,7 @@ public abstract class Character extends MovingEntity {
     protected class InvincibleAnimation extends EntityAnimation {
         private Animation baseAnimation;
 
-        protected InvincibleAnimation(Animation baseAnimation) {
+        protected InvincibleAnimation(@NotNull Animation baseAnimation) {
             this.baseAnimation = baseAnimation;
         }
 
@@ -177,7 +177,8 @@ public abstract class Character extends MovingEntity {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
         }
 
-        public void reset(Animation baseAnimation) {
+        public void reset(@NotNull Animation baseAnimation) {
+            assert baseAnimation != this;
             this.baseAnimation = baseAnimation;
         }
     }

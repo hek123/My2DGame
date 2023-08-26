@@ -7,6 +7,8 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
+      <excludePattern pattern="Test.java" />
+      <excludePattern pattern=" Test.form" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -20,5 +22,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="opencsv" level="project" />
+    <orderEntry type="library" name="google.code.gson" level="project" />
   </component>
 </module>

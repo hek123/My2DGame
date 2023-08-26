@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
 
@@ -21,9 +22,10 @@ public class UtilityTool {
     }
 
     static public BufferedImage loadImage(String path) throws IOException {
-        Class<UtilityTool> classLoader = UtilityTool.class;
+        InputStream inputStream = UtilityTool.class.getResourceAsStream(path);
+        if (inputStream == null) throw new IOException();
         // load the image
-        return ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream(path)));
+        return ImageIO.read(inputStream);
     }
 
     static public BufferedImage loadScaledImage(String path) {
