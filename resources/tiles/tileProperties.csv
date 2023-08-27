@@ -1,0 +1,10 @@
+nbTiles 8
+file tileName isSolid
+0 grass false
+1 wall true
+2 water true
+3 dirt false
+4 tree true
+5 sand false
+6 pineTree true
+7 door true
