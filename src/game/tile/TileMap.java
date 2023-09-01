@@ -8,9 +8,8 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
-import com.opencsv.exceptions.CsvException;
 import com.opencsv.exceptions.CsvValidationException;
-import game.main.Game;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -54,16 +53,19 @@ public class TileMap {
     }
 
     static public TileMap emptyTileMap(int width, int height) {
+        assert width > 0 && height > 0;
+
         TileMap out = new TileMap(width, height);
-        out.setEmptyTileMap();
+        for (int[] x : out.tileMap) {
+            Arrays.fill(x, -1);
+        }
         return out;
     }
-    static public TileMap loadTileMap(String file) throws IOException {
+    static public TileMap loadTileMap(@NotNull String file) throws IOException {
         if (file.endsWith(".json")) {
             if (loadSaveDebug) System.out.println("Load json map");
             return loadJsonMap(file);
         } else {
-//            TileMap out = new TileMap();
             MyLoader loader;
             if (file.endsWith(".txt")) {
                 if (loadSaveDebug) System.out.println("load txt map");
@@ -127,10 +129,11 @@ public class TileMap {
         return out;
     }
 
-    static public void saveTileMap(String file, TileMap tileMap) throws IOException {
+    @Deprecated
+    static public void saveTileMap(String file, @NotNull TileMap tileMap) throws IOException {
         tileMap.saveFormattedMap(file);
     }
-    static public void saveJSONTileMap(String file, TileMap tileMap) throws IOException {
+    static public void saveJSONTileMap(String file, @NotNull TileMap tileMap) throws IOException {
         JsonWriter jsonWriter = new JsonWriter(new FileWriter(file));
         new Gson().toJson(tileMap, TileMap.class, jsonWriter);
         jsonWriter.close();
@@ -143,12 +146,6 @@ public class TileMap {
         this.width = width;
         this.height = height;
         tileMap = new int[width][height];
-    }
-
-    private void setEmptyTileMap() {
-        for (int[] x : tileMap) {
-            Arrays.fill(x, -1);
-        }
     }
 
     private void saveFormattedMap(String file) throws IOException {
@@ -229,7 +226,6 @@ public class TileMap {
     }
 
     public final Tile getTile(int i, int j) {
-        assert tileMap != null;
         int idx = tileMap[i][j];
         if (idx == -1) return null;
         Tile out = tiles.get(idx);
@@ -272,6 +268,7 @@ public class TileMap {
     protected void drawEmptyTile(Graphics2D g2d, int x, int y) {
         final int width = 4;
         g2d.setColor(Color.darkGray);
+        g2d.setStroke(new BasicStroke(2 * width));
         g2d.drawRoundRect(x, y, tileSize - 2*width, tileSize - 2*width, width, width);
     }
 }

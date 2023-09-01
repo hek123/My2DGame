@@ -4,9 +4,8 @@ import Utility.DataStructures.Solid;
 import Utility.ImageAnchor;
 import Utility.Vector2D;
 import game.character.Character;
-import game.main.Game;
-import game.tile.TileManager;
 import game.visual.animations.Animation;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -17,6 +16,7 @@ import static game.main.GamePanel.*;
  */
 public abstract class Entity implements Solid {
     static protected void checkBBox(Rectangle bBox) {
+        assert bBox != null;
         assert !bBox.isEmpty();
     }
 
@@ -63,30 +63,51 @@ public abstract class Entity implements Solid {
 
     public Animation animation;
 
+    protected double x, y;
+    public final Rectangle bBox;
+
     /**
      *
-     * @return the bounding box used in collision detection etc.
+     * @param bBox relative coordinates of the bounding box.
      */
-    public abstract Rectangle getBBox();
+    protected Entity(@NotNull Rectangle bBox) {
+        checkBBox(bBox);
+        this.bBox = bBox;
+    }
+
+    /**
+     *
+     * @return the absolute position of the bounding box used in collision detection etc.
+     */
+    public final Rectangle getBBox() {
+        return new Rectangle((int)x + bBox.x, (int)y + bBox.y, bBox.width, bBox.height);
+    }
 
     /**
      *
      * @return X coordinate of the current position
      */
-    abstract public int getX();
+    public final int getX() {
+        return (int) x;
+    }
 
     /**
      *
      * @return Y coordinate of the current position
      */
-    abstract public int getY();
+    public final int getY() {
+        return (int) y;
+    }
 
     /**
      * Sets the current position to (x, y)
      * @param x X coordinate
      * @param y Y coordinate
      */
-    abstract public void setPosition(int x, int y);
+    public final void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
     public Vector2D getCenterPos() {
         return new Vector2D((int) getBBox().getCenterX(), (int) getBBox().getCenterY());

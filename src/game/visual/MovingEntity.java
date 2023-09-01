@@ -23,19 +23,12 @@ public abstract class MovingEntity extends Entity {
     static private final Stroke nextBBoxStroke = new BasicStroke(1);
 
     // Position & Movement
-    private final Rectangle bBox;
-    /**
-     * the current position, in double precision to support non integer speed
-     */
-    private double x, y;
-    /**
-     * The current speed in x and y direction
-     */
     private double speed, direction;
     /**
      * flag indicating if the entity is moving
      */
     public boolean moving;
+    static public final double RIGHT = 0., DOWN = Math.PI / 2, LEFT = Math.PI, UP = 3 * Math.PI / 2;
 
     /**
      * List with targets with which the entity has to collide
@@ -47,30 +40,8 @@ public abstract class MovingEntity extends Entity {
     private final Deque<Rectangle> targetBox = new ArrayDeque<>();
 
     protected MovingEntity(@NotNull Rectangle solidArea) {
-        checkBBox(solidArea);
-        bBox = solidArea;
+        super(solidArea);
         collisionExceptions.add(this);
-    }
-
-    @Override
-    public Rectangle getBBox() {
-        return new Rectangle((int) x + bBox.x, (int) y + bBox.y, bBox.width, bBox.height);
-    }
-
-    @Override
-    public final int getX() {
-        return (int) x;
-    }
-
-    @Override
-    public final int getY() {
-        return (int) y;
-    }
-
-    @Override
-    public final void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
     }
 
     /**
@@ -98,24 +69,25 @@ public abstract class MovingEntity extends Entity {
             case 1 -> Direction.DOWN;
             case 2 -> Direction.LEFT;
             case 3 -> Direction.UP;
-            default -> throw new RuntimeException(Integer.toString(div));
+            default -> throw new ArithmeticException(Integer.toString(div));
         };
     }
     public final double getExactDirection() {
         return direction;
     }
+
     public final void setDirection(Direction direction) {
         this.direction = switch (direction) {
-            case RIGHT -> 0.;
-            case DOWN -> Math.PI / 2;
-            case LEFT -> Math.PI;
-            case UP -> 3 * Math.PI / 2;
+            case RIGHT -> RIGHT;
+            case DOWN -> DOWN;
+            case LEFT -> LEFT;
+            case UP -> UP;
         };
-        assert getDirection() == direction;
     }
     public final void setDirection(double direction) {
-        this.direction = direction;
+        this.direction = direction % Math.TAU;
     }
+
     public final double getCurrentSpeed() {
         return speed;
     }
@@ -131,7 +103,7 @@ public abstract class MovingEntity extends Entity {
         return getBBox(getVx() * tileSize / FPS, getVy() * tileSize / FPS);
     }
 
-    protected Rectangle getBBox(double dx, double dy) {
+    protected final Rectangle getBBox(double dx, double dy) {
         return new Rectangle((int)(x + dx) + bBox.x, (int)(y + dy) + bBox.y, bBox.width, bBox.height);
     }
 
