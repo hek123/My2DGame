@@ -58,12 +58,6 @@ public class EntityManager {
         }
     }
 
-    public void drawEntityDebugInfo(Graphics2D g2d, Vector2D framePos) {
-        for (Entity entity: getEntityArray()) {
-            entity.drawDebugInfo(g2d, framePos);
-        }
-    }
-
     synchronized private Animation[] getSortedAnimationsArray() {
         animations.sort(Comparator.comparingInt(Animation::getLayerLevel));
         return animations.toArray(new Animation[0]);

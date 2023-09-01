@@ -10,6 +10,7 @@ import game.visual.EntityManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.concurrent.*;
 
 import static game.main.GamePanel.*;
@@ -18,9 +19,6 @@ import static main.Main.optionPanel;
 
 
 public class Game {
-    // WORLD SETTINGS
-//    static public final int maxWorldCol = 50, maxWorldRow = 50;
-
     public TileManager tileManager;
     public Player player;
     public UI ui;
@@ -28,6 +26,7 @@ public class Game {
     public EventHandler eventHandler;
 
     private AssetSetter assetSetter;
+    public final ArrayList<DebugInfo> debugInfoArrayList = new ArrayList<>();
 
     private ScheduledThreadPoolExecutor gameThread;
     private ScheduledFuture<?> scheduledFuture;
@@ -142,8 +141,11 @@ public class Game {
         entityManager.drawAnimations(g2d, framePos);
 
         if (ui.debugInfo) {
-            player.drawDebugInfo(g2d, framePos);
-            entityManager.drawEntityDebugInfo(g2d, framePos);
+            for (DebugInfo info : debugInfoArrayList) {
+                info.drawDebugInfo(g2d, framePos);
+            }
+//            player.drawDebugInfo(g2d, framePos);
+//            entityManager.drawEntityDebugInfo(g2d, framePos);
         }
 
         ui.draw(g2d);

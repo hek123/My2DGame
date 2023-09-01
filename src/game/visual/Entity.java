@@ -3,6 +3,7 @@ package game.visual;
 import Utility.ImageAnchor;
 import Utility.Vector2D;
 import game.character.Character;
+import game.main.DebugInfo;
 import game.visual.animations.Animation;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +14,7 @@ import static game.main.GamePanel.*;
 /**
  * Baseclass for anything that can be rendered.
  */
-public abstract class Entity implements Animation {
+public abstract class Entity implements Animation, DebugInfo {
     static protected void checkBBox(Rectangle bBox) {
         assert bBox != null;
         assert !bBox.isEmpty();
@@ -60,8 +61,6 @@ public abstract class Entity implements Animation {
     public boolean background;
     public boolean removeIfInvisible = false;
 
-//    public Animation animation;
-
     protected double x, y;
     public final Rectangle bBox;
 
@@ -72,6 +71,8 @@ public abstract class Entity implements Animation {
     protected Entity(@NotNull Rectangle bBox) {
         checkBBox(bBox);
         this.bBox = bBox;
+
+        game.debugInfoArrayList.add(this);
     }
 
     /**
@@ -120,6 +121,7 @@ public abstract class Entity implements Animation {
         g2d.drawImage(imageAnchor.image(), getX() - imageAnchor.anchor().x - framePos.x, getY() - imageAnchor.anchor().y - framePos.y, null);
     }
 
+    @Override
     public void drawDebugInfo(Graphics2D g2d, Vector2D framePos) {
         // draw bbox
         g2d.setStroke(bBoxStroke);
