@@ -23,7 +23,7 @@ public class Arrow extends Projectile {
         g2d.drawImage(image0, 0, 2, null);
         g2d.dispose();
 
-        double[] angles = {Math.PI / 2, -Math.PI / 2, -Math.PI, 0};
+        double[] angles = {0, Math.PI / 2, Math.PI, 3 * Math.PI / 2};
         for (int i = 0; i < 4; i++) {
             images[i][0] = new ImageAnchor(new BufferedImage(tileSize, tileSize, image.getType()));
             g2d = (Graphics2D) images[i][0].image().getGraphics();
@@ -54,23 +54,6 @@ public class Arrow extends Projectile {
         super(getBBox(source.getDirection()), source, 5.5);
         spriteImages = images;
         nbSprites = 1;
-//        animation = new MovingSprite(images, .15, 1);
-
-//        Rectangle sourceBBox = source.getNextBBox();
-////        Rectangle thisSA = getSolidArea();
-//        Rectangle thisSA = new Rectangle(0, 0, tileSize, tileSize);
-//        switch (source.getDirection()) {
-//            case LEFT -> setPosition(sourceBBox.x - thisSA.x - thisSA.width, source.getY());
-//            case RIGHT -> setPosition(sourceBBox.x + sourceBBox.width - thisSA.x, source.getY());
-//            case DOWN -> setPosition(source.getX(), sourceBBox.y + sourceBBox.height - thisSA.y);
-//            case UP -> setPosition(source.getX(), sourceBBox.y- thisSA.height - thisSA.y);
-//        }
-//
-//        game.entityManager.addMovingEntityToMap(this);
-
-//        setDirection(source.getDirection());
-//        setCurrentSpeed(speed);
-//        moving = true;
 
         damage = source.strength;
 

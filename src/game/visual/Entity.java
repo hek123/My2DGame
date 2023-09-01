@@ -71,8 +71,6 @@ public abstract class Entity implements Animation, DebugInfo {
     protected Entity(@NotNull Rectangle bBox) {
         checkBBox(bBox);
         this.bBox = bBox;
-
-        game.debugInfoArrayList.add(this);
     }
 
     /**

@@ -30,7 +30,7 @@ public final class Player extends Character implements MovementAI {
 
     // Attack & damage
     private final Rectangle[] attackRange = {
-            new Rectangle(16, 48, 16, 30), new Rectangle(16, -30, 16, 30), new Rectangle(-30+3, 21, 30, 16), new Rectangle(48-3, 21, 30, 16)
+            new Rectangle(48-3, 21, 30, 16), new Rectangle(16, 48, 16, 30), new Rectangle(-30+3, 21, 30, 16), new Rectangle(16, -30, 16, 30)
     };
     boolean attacking = false;
 

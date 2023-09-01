@@ -81,6 +81,8 @@ public class EntityManager {
         addAnimationToMap(entity);
         assert !entities.contains(entity);
         entities.add(entity);
+
+        game.debugInfoArrayList.add(entity);
     }
 
     synchronized public void removeAnimationFromMap(@NotNull Animation animation) {
@@ -94,6 +96,8 @@ public class EntityManager {
     synchronized public void removeEntityFromMap(Entity entity) {
         removeAnimationFromMap(entity);
         if (!entities.remove(entity)) throw new AssertionError();
+
+        game.debugInfoArrayList.remove(entity);
     }
 
     synchronized public void clearMap() {

@@ -19,7 +19,7 @@ import java.util.Arrays;
 import static game.main.GamePanel.*;
 
 public class GreenGuard extends Monster implements MovementAI {
-    static final private int nbSprites = 6;
+    static final private int nbSprites = 6, fps = 10;
     static final private ImageAnchor[] sprites = new ImageAnchor[nbSprites];
 
     static {
@@ -45,7 +45,6 @@ public class GreenGuard extends Monster implements MovementAI {
         strength = 2;
 
         movementAI = this;
-//        animation = new SimpleAnimation(nbSprites, 10, SimpleAnimation.Type.backNForth);
 
         super.nbSprites = nbSprites;
         spriteImages = new ImageAnchor[4][nbSprites];
@@ -90,52 +89,4 @@ public class GreenGuard extends Monster implements MovementAI {
         }
         spriteCounter++;
     }
-
-//    protected class SimpleAnimation extends EntityAnimation {
-//        private int animationCtr = 0, sprite = 0;
-//        private int incr = 1;
-//        private final int nbSprites, fps;
-//
-//        private final Type type;
-//
-//        public enum Type {
-//            cycle, backNForth
-//        }
-
-//        public SimpleAnimation(int nbSprites, int fps, Type type) {
-//            assert nbSprites >= 2;
-//
-//            this.nbSprites = nbSprites;
-//            this.fps = fps;
-//            this.type = type;
-//        }
-//
-//        @Override
-//        public @NotNull Animation updateA() {
-//            if (animationCtr * fps / FPS >= 1) {
-//                sprite += incr;
-//                if (sprite == nbSprites) {
-//                    switch (type) {
-//                        case cycle -> sprite = 0;
-//                        case backNForth -> {
-//                            incr *= -1;
-//                            sprite = nbSprites - 1;
-//                        }
-//                    }
-//                } else if (sprite == -1) {
-//                    assert type == Type.backNForth;
-//                    incr *= -1;
-//                    sprite = 1;
-//                }
-//                animationCtr = 0;
-//            }
-//            animationCtr++;
-//            return animation;
-//        }
-//
-//        @Override
-//        public void drawA(Graphics2D g2d, Vector2D framePos) {
-//            drawImage(g2d, framePos, sprites[sprite]);
-//        }
-//    }
 }
