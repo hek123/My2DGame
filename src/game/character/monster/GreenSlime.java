@@ -17,7 +17,10 @@ public class GreenSlime extends Monster {
 
     public GreenSlime(int x, int y, Rectangle territory) {
         super(new Rectangle(3, 18, 42, 30));
-        animation = new SpriteWithHPBar(spriteImages, .15, 2);
+//        animation = new SpriteWithHPBar(spriteImages, .15, 2);
+        super.spriteImages = spriteImages;
+        nbSprites = 2;
+        setSpriteUpdatePeriod(.15);
 
         setPosition(x, y);
         game.entityManager.addMovingEntityToMap(this);

@@ -5,8 +5,6 @@ import Utility.UtilityTool;
 import Utility.Vector2D;
 import game.character.Character;
 import game.visual.Entity;
-import game.visual.animations.Animation;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,7 +20,7 @@ public class GreenFireBall extends Projectile {
         super(new Rectangle(16, 16, 16, 16), source, speed);
 
         imageAnchor = new ImageAnchor(UtilityTool.rotateImage(image, direction));
-        animation = new GFA();
+//        animation = new GFA();
 
         fire(direction);
 
@@ -56,15 +54,8 @@ public class GreenFireBall extends Projectile {
         source = character;
     }
 
-    class GFA extends EntityAnimation {
-        @Override
-        public @NotNull Animation updateA() {
-            return animation;
-        }
-
-        @Override
-        public void drawA(Graphics2D g2d, Vector2D framePos) {
+    @Override
+    public void drawA(Graphics2D g2d, Vector2D framePos) {
             drawImage(g2d, framePos, imageAnchor);
         }
-    }
 }

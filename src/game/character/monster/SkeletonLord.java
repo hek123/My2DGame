@@ -15,7 +15,10 @@ public class SkeletonLord extends Monster {
 
     public SkeletonLord(int x, int y) {
         super(new Rectangle(tileSize-24, tileSize-40, tileSize, 3*tileSize/2));
-        animation = new SpriteWithHPBar(images, .2, 2);
+//        animation = new SpriteWithHPBar(images, .2, 2);
+        super.spriteImages = images;
+        nbSprites = 2;
+        setSpriteUpdatePeriod(.2);
 
         setPosition(x, y);
         game.entityManager.addMovingEntityToMap(this);

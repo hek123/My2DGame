@@ -10,6 +10,7 @@ public class Heart extends SuperObject {
     private static final ImageAnchor image = new ImageAnchor(UtilityTool.loadScaledImage(imageFolder + "heart_full.png"));
 
     public Heart() {
+        super(image);
         removeIfInvisible = true;
     }
 
@@ -22,10 +23,5 @@ public class Heart extends SuperObject {
     protected void getObject(Player player) {
         game.entityManager.removeEntityFromMap(this);
         player.receiveHealth(2);
-    }
-
-    @Override
-    public ImageAnchor getImage() {
-        return image;
     }
 }

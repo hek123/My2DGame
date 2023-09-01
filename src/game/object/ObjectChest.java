@@ -9,9 +9,8 @@ import game.player.Player;
 public class ObjectChest extends SuperObject {
     static private final ImageAnchor image = new ImageAnchor(UtilityTool.loadScaledImage(imageFolder + "chest.png"), new Vector2D(0, 0));
 
-    @Override
-    public ImageAnchor getImage() {
-        return image;
+    public ObjectChest() {
+        super(image);
     }
 
     @Override

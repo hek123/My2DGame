@@ -52,7 +52,9 @@ public class Arrow extends Projectile {
 
     public Arrow(Character source) {
         super(getBBox(source.getDirection()), source, 5.5);
-        animation = new MovingSprite(images, .15, 1);
+        spriteImages = images;
+        nbSprites = 1;
+//        animation = new MovingSprite(images, .15, 1);
 
 //        Rectangle sourceBBox = source.getNextBBox();
 ////        Rectangle thisSA = getSolidArea();

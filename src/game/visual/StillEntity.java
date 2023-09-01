@@ -2,8 +2,6 @@ package game.visual;
 
 import Utility.ImageAnchor;
 import Utility.Vector2D;
-import game.visual.animations.Animation;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -11,29 +9,18 @@ import java.awt.*;
  * Implementation of Entity for entities that do not move
  */
 public abstract class StillEntity extends Entity {
-    protected StillEntity(Rectangle solidArea) {
+    private final ImageAnchor imageAnchor;
+
+    protected StillEntity(Rectangle solidArea, ImageAnchor imageAnchor) {
         super(solidArea);
-        animation = new ShowObject(getImage());
+        this.imageAnchor = imageAnchor;
     }
 
-    public abstract ImageAnchor getImage();
+    @Override
+    public void updateA() {}
 
-
-    protected class ShowObject extends EntityAnimation {
-        private final ImageAnchor imageAnchor;
-
-        public ShowObject(ImageAnchor imageAnchor) {
-            this.imageAnchor = imageAnchor;
-        }
-
-        @Override
-        public @NotNull Animation updateA() {
-            return animation;
-        }
-
-        @Override
-        public void drawA(Graphics2D g2d, Vector2D framePos) {
+    @Override
+    public void drawA(Graphics2D g2d, Vector2D framePos) {
             drawImage(g2d, framePos, imageAnchor);
         }
-    }
 }

@@ -6,8 +6,6 @@ import Utility.Vector2D;
 import game.character.movementAI.MovementAI;
 import game.character.movementAI.TerritoryBound;
 import game.visual.MovingEntity;
-import game.visual.animations.Animation;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -29,27 +27,18 @@ public abstract class Character extends MovingEntity {
     public int magic, maxMagic;
 
     // States
-    boolean invincible = false, dying = false;
+    public boolean invincible = false, dying = false;
     protected MovementAI movementAI;
 
     // counters
-    protected int damageCoolDownCounter = 0;
+    protected int damageCoolDownCounter = 0, dyingCounter = 0;
     protected int damageCoolDownTime = FPS;
-
-    // animations
-    protected Animation walkingAnimation, dyingAnimation;
-    protected InvincibleAnimation invincibleAnimation;
-
 
     protected Character(Rectangle BBox) {
         super(BBox);
 
         setDirection(Direction.DOWN);
     }
-
-//    public void setSpeed(double speed) {
-//        currentSpeed = speed;
-//    }
 
     @Override
     public void drawDebugInfo(Graphics2D g2d, Vector2D framePos) {
@@ -126,11 +115,9 @@ public abstract class Character extends MovingEntity {
                 killedBy(source);
                 source.hasKilled(this);
                 dying = true;
+                game.entityManager.removeMovingEntityFromMap(this);
             } else {
                 invincible = true;
-                if (invincibleAnimation == null) invincibleAnimation = new InvincibleAnimation(animation);
-                else invincibleAnimation.reset(animation);
-                animation = invincibleAnimation;
             }
         }
     }
@@ -155,67 +142,39 @@ public abstract class Character extends MovingEntity {
     }
 
     // ### Animations ###
-    protected class InvincibleAnimation extends EntityAnimation {
-        private Animation baseAnimation;
 
-        protected InvincibleAnimation(@NotNull Animation baseAnimation) {
-            this.baseAnimation = baseAnimation;
-        }
-
-        @Override
-        public @NotNull Animation updateA() {
-            baseAnimation.updateA();
-            animation = invincible ? animation : baseAnimation;
-            return animation;
-        }
-
-        @Override
-        public void drawA(Graphics2D g2d, Vector2D framePos) {
-            if (damageCoolDownCounter % (FPS / 3) < (FPS / 6))
-                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
-            baseAnimation.drawA(g2d, framePos);
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
-        }
-
-        public void reset(@NotNull Animation baseAnimation) {
-            assert baseAnimation != this;
-            this.baseAnimation = baseAnimation;
-        }
-    }
-
-    protected class DyingAnimation extends EntityAnimation {
-        Animation baseAnimation;
-        int dyingCounter = 0;
-
-        public DyingAnimation(Animation baseAnimation) {
-            this.baseAnimation = baseAnimation;
-            game.entityManager.removeMovingEntityFromMap(Character.this);
-            game.entityManager.addAnimationToMap(this);
-        }
-
-        @Override
-        public void drawA(Graphics2D g2d, Vector2D framePos) {
-            if (dyingCounter % (FPS / 6) < (FPS / 12))
-                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
-            baseAnimation.drawA(g2d, framePos);
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
-        }
-
-        @Override
-        public @NotNull Animation updateA() {
+    @Override
+    public void updateA() {
+        if (dying) {
             if (dyingCounter >= FPS / 2) {
                 System.out.println("dead");
                 game.entityManager.removeAnimationFromMap(this);
             }
             dyingCounter++;
-            return animation;
+        } else {
+            updateSpriteCounter();
+        }
+    }
+
+    @Override
+    public void drawA(Graphics2D g2d, Vector2D framePos) {
+        if (dying) {
+            if (dyingCounter % (FPS / 6) < (FPS / 12))
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+            drawSprite(g2d, framePos);
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
+        } else {
+            if (invincible && damageCoolDownCounter % (FPS / 3) < (FPS / 6))
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
+            drawSprite(g2d, framePos);
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
         }
     }
 
     // ### UTILS ###
     static protected ImageAnchor[][] loadSpriteImages(String spriteFolder, String spriteName, int nbSprites) {
         ImageAnchor[][] imagesOut = new ImageAnchor[4][nbSprites];
-        String[] dirs = new String[]{"_down_", "_up_", "_left_", "_right_"};
+        String[] dirs = new String[]{"_right_", "_down_", "_left_", "_up_"};
         for (int dir = 0; dir < 4; dir++) {
             for (int spriteNum = 0; spriteNum < nbSprites; spriteNum++) {
                 imagesOut[dir][spriteNum] = new ImageAnchor(UtilityTool.loadAutoScaledImage(

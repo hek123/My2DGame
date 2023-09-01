@@ -36,7 +36,7 @@ public class EntityManager {
         assert animations.size() == new HashSet<>(animations).size();
 
         animationUpdateLock = true;
-        animations.replaceAll(Animation::updateA);
+        animations.forEach(Animation::updateA);
         animationUpdateLock = false;
 
         animations.removeAll(animationsToRemove);
@@ -49,8 +49,7 @@ public class EntityManager {
         for (Animation animation: getSortedAnimationsArray()) {
             if (animation.isVisible(TileManager.visible))
                 animation.drawA(g2d, framePos);
-            else if (animation instanceof Entity.EntityAnimation entityAnimation) {
-                Entity entity = entityAnimation.getEntity();
+            else if (animation instanceof Entity entity) {
                 if (entity.removeIfInvisible) {
                     if (entity instanceof MovingEntity movingEntity) removeMovingEntityFromMap(movingEntity);
                     else removeEntityFromMap(entity);
@@ -85,7 +84,7 @@ public class EntityManager {
         movingEntities.add(entity);
     }
     synchronized public void addEntityToMap(Entity entity) {
-        addAnimationToMap(entity.animation);
+        addAnimationToMap(entity);
         assert !entities.contains(entity);
         entities.add(entity);
     }
@@ -99,12 +98,14 @@ public class EntityManager {
         if (!movingEntities.remove(entity)) throw new AssertionError();
     }
     synchronized public void removeEntityFromMap(Entity entity) {
-        removeAnimationFromMap(entity.animation);
+        removeAnimationFromMap(entity);
         if (!entities.remove(entity)) throw new AssertionError();
     }
 
     synchronized public void clearMap() {
         animations.clear();
+        entities.clear();
+        movingEntities.clear();
     }
 
     public class CollisionChecker implements Graph<Vector2D> {

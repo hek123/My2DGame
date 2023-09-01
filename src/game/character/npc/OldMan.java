@@ -17,7 +17,10 @@ public class OldMan extends NPC {
 
     public OldMan(int x, int y, Rectangle territory) {
         super(new Rectangle(6, 8, 36, 39));
-        animation = new MovingSprite(spriteImages, .3, 2);
+//        animation = new MovingSprite(spriteImages, .3, 2);
+        super.spriteImages = spriteImages;
+        nbSprites = 2;
+        setSpriteUpdatePeriod(.3);
 
         setDialogue();
         speed = .5;

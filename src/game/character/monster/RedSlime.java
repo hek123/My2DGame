@@ -14,7 +14,7 @@ public class RedSlime extends Monster {
 
     protected RedSlime(int x, int y) {
         super(new Rectangle(3, 18, 42, 30));
-        animation = new SpriteWithHPBar(spriteImages, .15, 2);
+//        animation = new SpriteWithHPBar(spriteImages, .15, 2);
 
         setPosition(x, y);
         game.entityManager.addMovingEntityToMap(this);

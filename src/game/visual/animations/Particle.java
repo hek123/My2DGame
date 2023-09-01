@@ -1,8 +1,6 @@
 package game.visual.animations;
 
 import Utility.Vector2D;
-import game.main.Game;
-import org.jetbrains.annotations.NotNull;
 
 import static game.main.GamePanel.*;
 
@@ -43,7 +41,7 @@ public class Particle implements Animation {
     }
 
     @Override
-    public @NotNull Animation updateA() {
+    public void updateA() {
         x += vx;
         y += vy;
         vy += gravity;
@@ -51,7 +49,6 @@ public class Particle implements Animation {
         if ((double) ctr / FPS > lifeTime)
             game.entityManager.removeAnimationFromMap(this);
         ctr++;
-        return this;
     }
 
     @Override

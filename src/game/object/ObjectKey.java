@@ -5,9 +5,11 @@ import Utility.UtilityTool;
 import game.player.Player;
 import game.item.Item;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static game.main.GamePanel.game;
+import static game.main.GamePanel.tileSize;
 
 public class ObjectKey extends SuperObject implements Item {
     static private final ImageAnchor image = new ImageAnchor(UtilityTool.loadScaledImage(imageFolder + "key.png"));
@@ -15,9 +17,8 @@ public class ObjectKey extends SuperObject implements Item {
 
     private int msgTimer = 0;
 
-    @Override
-    public ImageAnchor getImage() {
-        return image;
+    public ObjectKey() {
+        super(new Rectangle(tileSize, tileSize), image);
     }
 
     @Override

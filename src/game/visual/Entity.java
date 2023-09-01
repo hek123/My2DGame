@@ -1,6 +1,5 @@
 package game.visual;
 
-import Utility.DataStructures.Solid;
 import Utility.ImageAnchor;
 import Utility.Vector2D;
 import game.character.Character;
@@ -14,7 +13,7 @@ import static game.main.GamePanel.*;
 /**
  * Baseclass for anything that can be rendered.
  */
-public abstract class Entity implements Solid {
+public abstract class Entity implements Animation {
     static protected void checkBBox(Rectangle bBox) {
         assert bBox != null;
         assert !bBox.isEmpty();
@@ -61,7 +60,7 @@ public abstract class Entity implements Solid {
     public boolean background;
     public boolean removeIfInvisible = false;
 
-    public Animation animation;
+//    public Animation animation;
 
     protected double x, y;
     public final Rectangle bBox;
@@ -82,6 +81,8 @@ public abstract class Entity implements Solid {
     public final Rectangle getBBox() {
         return new Rectangle((int)x + bBox.x, (int)y + bBox.y, bBox.width, bBox.height);
     }
+
+    public abstract boolean isSolid();
 
     /**
      *
@@ -132,20 +133,14 @@ public abstract class Entity implements Solid {
         g2d.fillOval(getX() - framePos.x - 3, getY() - framePos.y - 3, 6, 6);
     }
 
-    protected abstract class EntityAnimation implements Animation {
-        @Override
-        public final int getLayerLevel() {
-            if (background) return getY() - game.tileManager.tileMap.getHeight() * tileSize;
-            else return getY();
-        }
+    @Override
+    public final int getLayerLevel() {
+        if (background) return getY() - game.tileManager.tileMap.getHeight() * tileSize;
+        else return getY();
+    }
 
-        @Override
-        public final boolean isVisible(Rectangle screenBounds) {
-            return screenBounds.intersects(getBBox());
-        }
-
-        public final Entity getEntity() {
-            return Entity.this;
-        }
+    @Override
+    public final boolean isVisible(Rectangle screenBounds) {
+        return screenBounds.intersects(getBBox());
     }
 }

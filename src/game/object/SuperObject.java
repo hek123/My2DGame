@@ -1,10 +1,13 @@
 package game.object;
 
+import Utility.ImageAnchor;
+import Utility.Vector2D;
 import game.player.Player;
 import game.visual.StillEntity;
 import game.visual.MovingEntity;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import static game.main.GamePanel.*;
 
@@ -13,13 +16,20 @@ public abstract class SuperObject extends StillEntity implements InteractiveObje
     /**
      * resource folder containing object images
      */
-    protected static String imageFolder = "/object/";
+    protected static final String imageFolder = "/object/";
+    protected static final Rectangle oneTile = new Rectangle(tileSize, tileSize);
 
-    protected SuperObject() {
-        this(new Rectangle(0, 0, tileSize, tileSize));
+    protected SuperObject(BufferedImage image) {
+        this(new ImageAnchor(image));
     }
-    protected SuperObject(Rectangle bBox) {
-        super(bBox);
+    @Deprecated
+    protected SuperObject(ImageAnchor imageAnchor) {
+        this(oneTile, imageAnchor);
+        assert imageAnchor.anchor().x == 0 && imageAnchor.anchor().y == 0;
+        assert imageAnchor.image().getWidth() == tileSize && imageAnchor.image().getHeight() == tileSize;
+    }
+    protected SuperObject(Rectangle bBox, ImageAnchor imageAnchor) {
+        super(bBox, imageAnchor);
         background = true;
     }
 

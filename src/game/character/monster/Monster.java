@@ -37,7 +37,7 @@ public abstract class Monster extends Character {
         setCurrentSpeed(0);
         moving = false;
 
-        animation = new DyingAnimation(animation);
+//        animation = new DyingAnimation(animation);
 
         // Loot drop
         for (Loot loot : lootMap) {
@@ -98,15 +98,22 @@ public abstract class Monster extends Character {
     }
 
     // ### Animations ###
-    protected class SpriteWithHPBar extends MovingSprite {
-        public SpriteWithHPBar(ImageAnchor[][] spriteImages, double spriteUpdatePeriod, int nbSprites) {
-            super(spriteImages, spriteUpdatePeriod, nbSprites);
-        }
 
-        @Override
-        public void drawA(Graphics2D g2d, Vector2D framePos) {
-            super.drawA(g2d, framePos);
-            hpBar.draw(g2d, (double) health / maxHealth, getX() - framePos.x, getY() - framePos.y);
-        }
+    @Override
+    protected void drawSprite(Graphics2D g2d, Vector2D framePos) {
+        super.drawSprite(g2d, framePos);
+        hpBar.draw(g2d, (double) health / maxHealth, getX() - framePos.x, getY() - framePos.y);
     }
+
+//    protected class SpriteWithHPBar extends MovingSprite {
+//        public SpriteWithHPBar(ImageAnchor[][] spriteImages, double spriteUpdatePeriod, int nbSprites) {
+//            super(spriteImages, spriteUpdatePeriod, nbSprites);
+//        }
+//
+//        @Override
+//        public void drawA(Graphics2D g2d, Vector2D framePos) {
+//            super.drawA(g2d, framePos);
+//            hpBar.draw(g2d, (double) health / maxHealth, getX() - framePos.x, getY() - framePos.y);
+//        }
+//    }
 }

@@ -23,7 +23,10 @@ public class FireBall extends Projectile implements Magic {
 
     public FireBall(Character source) {
         super(new Rectangle(16, 16, 16, 16), source, 8.5);
-        animation = new MovingSprite(spriteImages, .15, 2);
+//        animation = new MovingSprite(spriteImages, .15, 2);
+        super.spriteImages = spriteImages;
+        nbSprites = 2;
+        setSpriteUpdatePeriod(.15);
 
         setCurrentSpeed(speed);
     }

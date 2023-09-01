@@ -4,7 +4,6 @@ import Utility.ImageAnchor;
 import Utility.Vector2D;
 import game.character.Direction;
 import game.tile.TileManager;
-import game.visual.animations.Animation;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -99,7 +98,7 @@ public abstract class MovingEntity extends Entity {
      * returns the bounding box of the entity if the entity would move according to its direction and currentSpeed
      * @return bounding box
      */
-    public Rectangle getNextBBox() {
+    public final Rectangle getNextBBox() {
         return getBBox(getVx() * tileSize / FPS, getVy() * tileSize / FPS);
     }
 
@@ -175,7 +174,7 @@ public abstract class MovingEntity extends Entity {
      */
     protected abstract void action();
 
-    protected void invisibleAction() {};
+    protected void invisibleAction() {}
 
     /**
      * This method is called every game loop iteration before the entity is drawn
@@ -213,43 +212,39 @@ public abstract class MovingEntity extends Entity {
         }
     }
 
+    protected ImageAnchor[][] spriteImages;
 
-    public class MovingSprite extends EntityAnimation {
-        private final ImageAnchor[][] spriteImages;
+    protected int spriteCounter = 0, currentSprite = 0;
+    private int spriteUpdatePeriod;
+    protected int nbSprites = -1;
 
-        protected int spriteCounter = 0, currentSprite = 0;
-        public int spriteUpdatePeriod;
-        protected final int nbSprites;
+    public final void setSpriteUpdatePeriod(double updatePeriod) {
+        spriteUpdatePeriod = (int) Math.round(updatePeriod * FPS);
+    }
 
-        public MovingSprite(ImageAnchor[][] spriteImages, double spriteUpdatePeriod, int nbSprites) {
-            assert spriteImages.length == 4;
-            assert spriteImages[0].length == nbSprites;
-            assert spriteUpdatePeriod > 0;
-
-            this.spriteImages = spriteImages;
-            this.spriteUpdatePeriod = (int) Math.round(spriteUpdatePeriod * FPS);
-            this.nbSprites = nbSprites;
-        }
-
-        @Override
-        public @NotNull Animation updateA() {
-            if (moving) {
-                spriteCounter++;
-                if (spriteCounter == spriteUpdatePeriod) {
-                    spriteCounter = 0;
-                    currentSprite++;
-                    currentSprite %= nbSprites;
-                }
-            } else {
-                currentSprite = 0;
+    @Override
+    public void updateA() {
+        updateSpriteCounter();
+    }
+    protected void updateSpriteCounter() {
+        if (moving) {
+            spriteCounter++;
+            if (spriteCounter == spriteUpdatePeriod) {
+                spriteCounter = 0;
+                currentSprite++;
+                currentSprite %= nbSprites;
             }
-            return animation;
+        } else {
+            currentSprite = 0;
         }
+    }
 
-        @Override
-        public void drawA(Graphics2D g2d, Vector2D framePos) {
-            drawImage(g2d, framePos, spriteImages[MovingEntity.dirToInt(getDirection())][currentSprite]);
-        }
+    @Override
+    public void drawA(Graphics2D g2d, Vector2D framePos) {
+        drawSprite(g2d, framePos);
+    }
+    protected void drawSprite(Graphics2D g2d, Vector2D framePos) {
+        drawImage(g2d, framePos, spriteImages[MovingEntity.dirToInt(getDirection())][currentSprite]);
     }
 
 
@@ -269,10 +264,14 @@ public abstract class MovingEntity extends Entity {
      */
     static public int dirToInt(@NotNull Direction direction) {
         return switch (direction) {
-            case DOWN -> 0;
-            case RIGHT -> 3;
+            case RIGHT -> 0;
+            case DOWN -> 1;
             case LEFT -> 2;
-            case UP -> 1;
+            case UP -> 3;
         };
+    }
+    static public int dirToInt(double direction) {
+        assert 0 <= direction && direction < Math.TAU;
+        return (int) Math.round(direction / (Math.PI / 2));
     }
 }

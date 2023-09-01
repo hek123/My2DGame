@@ -15,6 +15,10 @@ public class Axe extends SuperObject implements Weapon {
     static final private ImageAnchor image = new ImageAnchor(UtilityTool.loadScaledImage(imageFolder + "axe.png"));
     static final private BufferedImage itemImage = UtilityTool.scaleImage(image.image(), Item.imageSize, Item.imageSize);
 
+    public Axe() {
+        super(image);
+    }
+
     @Override
     public boolean isSolid() {
         return false;
@@ -41,10 +45,5 @@ public class Axe extends SuperObject implements Weapon {
     @Override
     public int getDamage() {
         return 0;
-    }
-
-    @Override
-    public ImageAnchor getImage() {
-        return image;
     }
 }

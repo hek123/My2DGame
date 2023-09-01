@@ -11,9 +11,8 @@ import static game.main.GamePanel.game;
 public class ObjectBoots extends SuperObject {
     static private final ImageAnchor image = new ImageAnchor(UtilityTool.loadScaledImage(imageFolder + "boots.png"), new Vector2D(0, 0));
 
-    @Override
-    public ImageAnchor getImage() {
-        return image;
+    public ObjectBoots() {
+        super(image);
     }
 
     @Override

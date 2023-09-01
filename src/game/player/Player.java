@@ -16,10 +16,8 @@ import game.tile.TileManager;
 import game.visual.Entity;
 import game.projectile.Arrow;
 import game.projectile.FireBall;
-import game.visual.animations.Animation;
 import game.visual.animations.Particle;
 import main.Sound;
-import org.jetbrains.annotations.NotNull;
 
 import static game.main.GamePanel.*;
 
@@ -62,8 +60,11 @@ public final class Player extends Character implements MovementAI {
 
     public Player() {
         super(new Rectangle(9, 16, 30, 30));
-        animation = walkingAnimation = new MovingSprite(spriteImages[0], .15, 2);
-        invincibleAnimation = new InvincibleAnimation();
+//        animation = walkingAnimation = new MovingSprite(spriteImages[0], .15, 2);
+//        invincibleAnimation = new InvincibleAnimation();
+        super.spriteImages = spriteImages[0];
+        nbSprites = 2;
+        setSpriteUpdatePeriod(.15);
 
         setPosition(23 * GamePanel.tileSize, 21 * GamePanel.tileSize);
         game.entityManager.addEntityToMap(this);
@@ -119,7 +120,9 @@ public final class Player extends Character implements MovementAI {
             attacking = true;
             Sound.playSoundEffect(Sound.parry);
             game.entityManager.collisionChecker.checkAttack(this);
-            animation = new AttackingAnimation();
+            super.spriteImages = spriteImages[1];
+            spriteCounter = 0;
+//            animation = new AttackingAnimation();
         }
 
         // magic spells
@@ -198,13 +201,9 @@ public final class Player extends Character implements MovementAI {
         return new Rectangle(attackRange[dirToInt(getDirection())]);
     }
 
-
-    private final class AttackingAnimation extends EntityAnimation {
-        int spriteCounter = 0, currentSprite = 0;
-
-        @Override
-        public @NotNull Animation updateA() {
-            assert attacking;
+    @Override
+    public void updateA() {
+        if (attacking) {
             double elapsedTime = (double) spriteCounter / GamePanel.FPS;
             if (elapsedTime < .12) {
                 currentSprite = 0;
@@ -214,36 +213,28 @@ public final class Player extends Character implements MovementAI {
                 currentSprite = 0;
             } else {
                 attacking = false;
-                animation = walkingAnimation;
+                super.spriteImages = spriteImages[0];
             }
             spriteCounter++;
-            return animation;
-        }
-
-        @Override
-        public void drawA(Graphics2D g2d, Vector2D framePos) {
-            drawImage(g2d, framePos, spriteImages[1][dirToInt(getDirection())][currentSprite]);
+        } else {
+            updateSpriteCounter();
         }
     }
 
-    private final class InvincibleAnimation extends Character.InvincibleAnimation {
-        static final private int width = 5;
-        static private final Stroke stroke = new BasicStroke(2*width);
+    static final private int width = 5;
+    static private final Stroke stroke = new BasicStroke(2*width);
 
-        static private final Color red = new Color(.8f, 0.f, 0.f);
-        static private final Color transpRed = new Color(.8f, 0.f, 0.f, .5f);
+    static private final Color red = new Color(.8f, 0.f, 0.f);
+    static private final Color transpRed = new Color(.8f, 0.f, 0.f, .5f);
 
-        InvincibleAnimation() {
-            super(walkingAnimation);
-        }
+    @Override
+    public void drawA(Graphics2D g2d, Vector2D framePos) {
+        super.drawA(g2d, framePos);
 
-        @Override
-        public void drawA(Graphics2D g2d, Vector2D framePos) {
-            super.drawA(g2d, framePos);
-
+        if (invincible) {
             g2d.setColor((damageCoolDownCounter % (FPS / 2) < FPS / 4) ? red : transpRed);
             g2d.setStroke(stroke);
-            g2d.drawRect(width, width, TileManager.visible.width - 2*width, TileManager.visible.height - 2*width);
+            g2d.drawRect(width, width, TileManager.visible.width - 2 * width, TileManager.visible.height - 2 * width);
         }
     }
 }

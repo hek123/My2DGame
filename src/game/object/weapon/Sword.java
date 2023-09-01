@@ -17,7 +17,7 @@ public class Sword extends SuperObject implements Weapon {
     static private final BufferedImage icon = UtilityTool.scaleImage(image.image(), Item.imageSize, Item.imageSize);
 
     public Sword() {
-        super();
+        super(image);
     }
 
     @Override
@@ -31,11 +31,6 @@ public class Sword extends SuperObject implements Weapon {
             game.entityManager.removeEntityFromMap(this);
         else
             game.ui.scrollingMessage("Inventory is full");
-    }
-
-    @Override
-    public ImageAnchor getImage() {
-        return image;
     }
 
     @Override

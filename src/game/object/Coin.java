@@ -11,6 +11,7 @@ public class Coin extends SuperObject {
     static private final ImageAnchor image = new ImageAnchor(UtilityTool.loadScaledImage(imageFolder + "coin_bronze.png"));
 
     public Coin() {
+        super(image);
         removeIfInvisible = true;
     }
 
@@ -23,10 +24,5 @@ public class Coin extends SuperObject {
     protected void getObject(Player player) {
         player.coin++;
         game.entityManager.removeEntityFromMap(this);
-    }
-
-    @Override
-    public ImageAnchor getImage() {
-        return image;
     }
 }
