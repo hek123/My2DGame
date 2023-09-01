@@ -19,7 +19,7 @@ import static main.Main.optionPanel;
 
 public class Game {
     // WORLD SETTINGS
-    static public final int maxWorldCol = 50, maxWorldRow = 50;
+//    static public final int maxWorldCol = 50, maxWorldRow = 50;
 
     public TileManager tileManager;
     public Player player;
@@ -39,7 +39,7 @@ public class Game {
     static public long gameCounter;
 
     private void initGame() {
-        tileManager = new TileManager(new Dimension(maxWorldCol, maxWorldRow));
+        tileManager = new TileManager("resources/maps/world01.txt");
         entityManager = new EntityManager();
         eventHandler = new EventHandler();
         player = new Player();

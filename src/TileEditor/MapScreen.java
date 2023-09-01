@@ -99,7 +99,7 @@ public class MapScreen extends JPanel {
             super.paintComponent(g);
 
             Graphics2D g2d = (Graphics2D) g;
-            tileMap.paintWindow(g2d, visible);
+            tileMap.paintWindow(g2d, visible, tileSize);
 
             g2d.setStroke(stroke);
             if (hasFocus()) {

@@ -1,7 +1,6 @@
 package game.tile;
 
 import Utility.Vector2D;
-import com.opencsv.exceptions.CsvValidationException;
 import game.main.Game;
 import game.ui.Scalable;
 
@@ -12,6 +11,9 @@ import static game.main.GamePanel.*;
 
 
 public class TileManager implements Scalable {
+    static private final Color gridLineColor = new Color(180, 180, 180, 200);
+    static private final Stroke gridLineStroke = new BasicStroke(1);
+
     public final TileMap tileMap;
 
     public Vector2D framePosition = new Vector2D();
@@ -19,11 +21,10 @@ public class TileManager implements Scalable {
 
     static public final Rectangle visible = new Rectangle();
 
-    public TileManager(Dimension maxDim) {
+    public TileManager(String map) {
         scalableList.add(this);
-        tileMap = new TileMap();
         try {
-            tileMap.loadTileMap("/maps/world01.txt");
+            tileMap = TileMap.loadTileMap(map);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -34,44 +35,28 @@ public class TileManager implements Scalable {
         int y = game.player.getY() - screenCenter.y;
 
         if (x < 0) x = 0;
-        if (x > Game.maxWorldCol * tileSize - visible.width)
-            x = Game.maxWorldCol * tileSize - visible.width;
+        if (x > tileMap.getWidth() * tileSize - visible.width)
+            x = tileMap.getWidth() * tileSize - visible.width;
         if (y < 0) y = 0;
-        if (y > Game.maxWorldRow * tileSize - visible.height)
-            y = Game.maxWorldRow * tileSize - visible.height;
+        if (y > tileMap.getHeight() * tileSize - visible.height)
+            y = tileMap.getHeight() * tileSize - visible.height;
 
         visible.x = framePosition.x = x;
         visible.y = framePosition.y = y;
     }
 
     public void draw(Graphics2D g2d, Vector2D framePosition) {
-        int colStart = Math.max(0, visible.x / tileSize), colEnd = Math.min(Game.maxWorldCol - 1, (visible.x + visible.width) / tileSize);
-        int rowStart = Math.max(0, visible.y / tileSize), rowEnd = Math.min(Game.maxWorldRow - 1, (visible.y + visible.height) / tileSize);
-
-        for (int col = colStart; col <= colEnd; col++) {
-            int x = col * tileSize - framePosition.x;
-            for (int row = rowStart; row <= rowEnd; row++) {
-                int y = row * tileSize - framePosition.y;
-                try {
-                    g2d.drawImage(tileMap.getTile(col, row).image, x, y, null);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    System.out.println("row, col = " + row + ", " + col);
-                    System.exit(-1);
-                }
-            }
-        }
+        tileMap.paintWindow(g2d, visible, tileSize);
 
         // draw Grid
         if (game.ui.debugInfo) {
-            g2d.setColor(new Color(180, 180, 180, 200));
+            g2d.setColor(gridLineColor);
+            g2d.setStroke(gridLineStroke);
 
-            for (int col = colStart; col <= colEnd; col++) {
-                int x = col * tileSize - visible.x;
+            for (int x = tileSize - visible.x % tileSize; x < visible.width; x += tileSize) {
                 g2d.drawLine(x, 0, x, visible.height);
             }
-            for (int row = rowStart; row <= rowEnd; row++) {
-                int y = row * tileSize - visible.y;
+            for (int y = tileSize - visible.y % tileSize; y < visible.height; y += tileSize) {
                 g2d.drawLine(0, y, visible.width, y);
             }
         }

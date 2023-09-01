@@ -78,8 +78,8 @@ public class Main extends JFrame {
         setVisible(true);
 
 //        goToMainMenu();
-//        startGame();
-        openTileEditor();
+        startGame();
+//        openTileEditor();
     }
 
     private static void showPanel(String card_panel) {

@@ -62,7 +62,7 @@ public class Particle implements Animation {
 
     @Override
     public int getLayerLevel() {
-        return Game.maxWorldRow * tileSize;
+        return game.tileManager.tileMap.getHeight() * tileSize;
     }
 
     @Override

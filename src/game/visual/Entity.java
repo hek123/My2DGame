@@ -114,7 +114,7 @@ public abstract class Entity implements Solid {
     protected abstract class EntityAnimation implements Animation {
         @Override
         public final int getLayerLevel() {
-            if (background) return getY() - Game.maxWorldRow * tileSize;
+            if (background) return getY() - game.tileManager.tileMap.getHeight() * tileSize;
             else return getY();
         }
 

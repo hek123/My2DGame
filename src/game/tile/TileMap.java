@@ -8,6 +8,7 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvException;
 import com.opencsv.exceptions.CsvValidationException;
 import game.main.Game;
 
@@ -23,6 +24,8 @@ import static game.main.GamePanel.tileSize;
 
 // TODO: interactive tiles in new framework
 public class TileMap {
+    static private final boolean loadSaveDebug = true;
+
     static private final ArrayList<Tile> tiles = getTiles();
 
     static private ArrayList<Tile> getTiles() {
@@ -51,29 +54,66 @@ public class TileMap {
     }
 
     static public TileMap emptyTileMap(int width, int height) {
-        TileMap out = new TileMap();
-        out.setEmptyTileMap(width, height);
+        TileMap out = new TileMap(width, height);
+        out.setEmptyTileMap();
         return out;
     }
     static public TileMap loadTileMap(String file) throws IOException {
         if (file.endsWith(".json")) {
+            if (loadSaveDebug) System.out.println("Load json map");
             return loadJsonMap(file);
         } else {
-            TileMap out = new TileMap();
+//            TileMap out = new TileMap();
             MyLoader loader;
-            if (file.endsWith(".txt"))
+            if (file.endsWith(".txt")) {
+                if (loadSaveDebug) System.out.println("load txt map");
                 loader = new TXTLoader();
-            else if (file.endsWith(".csv"))
+            } else if (file.endsWith(".csv")) {
+                if (loadSaveDebug) System.out.println("load csv map");
                 loader = new CSVLoader();
-            else
+            } else {
                 throw new IOException("Invalid file format");
+            }
 
             loader.loadFile(file);
 
             String[] format = loader.getNextLine();
 
-            if (format.length == 2) out.loadFormattedMap(loader, format);
-            else out.loadLegacyMap(loader, format);
+            TileMap out;
+            if (format.length == 2) {
+                if (loadSaveDebug) System.out.println("Formatted map");
+                int width = Integer.parseInt(format[0]);
+                int height = Integer.parseInt(format[1]);
+                out = new TileMap(width, height);
+                for (int j = 0; j < height; j++) {
+                    String[] row = loader.getNextLine();
+                    assert row.length == width;
+                    for (int i = 0; i < width; i++) {
+                        out.tileMap[i][j] = Integer.parseInt(row[i]);
+                    }
+                }
+            }
+            else {
+                System.out.println("Legacy map");
+                ArrayList<int[]> tmp = new ArrayList<>();
+                int width = 0;
+                String[] row = format;
+                while (row != null) {
+                    if (width == 0) width = row.length;
+                    else assert width == row.length;
+
+                    tmp.add(Arrays.stream(row).mapToInt(Integer::parseInt).toArray());
+                    row = loader.getNextLine();
+                }
+                int height = tmp.size();
+
+                out = new TileMap(width, height);
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < height; j++) {
+                        out.tileMap[i][j] = tmp.get(j)[i];
+                    }
+                }
+            }
 
             loader.close();
 
@@ -96,56 +136,18 @@ public class TileMap {
         jsonWriter.close();
     }
 
-    private int[][] tileMap;
-    private int width, height;
+    private final int[][] tileMap;
+    private final int width, height;
 
-    private void setEmptyTileMap(int width, int height) {
-        assert tileMap == null;
-
+    private TileMap(int width, int height) {
         this.width = width;
         this.height = height;
-
         tileMap = new int[width][height];
+    }
+
+    private void setEmptyTileMap() {
         for (int[] x : tileMap) {
             Arrays.fill(x, -1);
-        }
-    }
-
-    private void loadFormattedMap(MyLoader loader, String[] format) throws IOException {
-        assert tileMap == null;
-
-        width = Integer.parseInt(format[0]);
-        height = Integer.parseInt(format[1]);
-        tileMap = new int[width][height];
-
-        for (int j = 0; j < height; j++) {
-            String[] row = loader.getNextLine();
-            assert row.length == width;
-            for (int i = 0; i < width; i++) {
-                tileMap[i][j] = Integer.parseInt(row[i]);
-            }
-        }
-    }
-    private void loadLegacyMap(MyLoader loader, String[] firstRow) throws IOException {
-        assert tileMap == null;
-
-        ArrayList<int[]> tmp = new ArrayList<>();
-        width = 0;
-        String[] row = firstRow;
-        while (row != null) {
-            if (width == 0) width = row.length;
-            else assert width == row.length;
-
-            tmp.add(Arrays.stream(row).mapToInt(Integer::parseInt).toArray());
-            row = loader.getNextLine();
-        }
-        height = tmp.size();
-        tileMap = new int[width][height];
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                tileMap[i][j] = tmp.get(j)[i];
-            }
         }
     }
 
@@ -246,9 +248,9 @@ public class TileMap {
         return height;
     }
 
-    public final void paintWindow(Graphics2D g2d, Rectangle window) {
-        int colStart = Math.max(0, window.x / tileSize), colEnd = Math.min(Game.maxWorldCol - 1, (window.x + window.width) / tileSize);
-        int rowStart = Math.max(0, window.y / tileSize), rowEnd = Math.min(Game.maxWorldRow - 1, (window.y + window.height) / tileSize);
+    public final void paintWindow(Graphics2D g2d, Rectangle window, int tileSize) {
+        int colStart = Math.max(0, window.x / tileSize), colEnd = Math.min(width - 1, (window.x + window.width) / tileSize);
+        int rowStart = Math.max(0, window.y / tileSize), rowEnd = Math.min(height - 1, (window.y + window.height) / tileSize);
 
         for (int col = colStart; col <= colEnd; col++) {
             int x = col * tileSize - window.x;

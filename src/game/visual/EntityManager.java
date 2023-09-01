@@ -7,7 +7,6 @@ import game.player.Player;
 import game.tile.Tile;
 import game.tile.TileManager;
 import game.visual.animations.Animation;
-import game.visual.animations.Particle;
 import org.jetbrains.annotations.NotNull;
 
 import static game.main.GamePanel.*;
