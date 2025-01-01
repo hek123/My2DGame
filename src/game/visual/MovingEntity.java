@@ -19,8 +19,6 @@ import static game.main.GamePanel.*;
  * Implements and extends Entity for moving entities
  */
 public abstract class MovingEntity extends Entity {
-    static private final Stroke nextBBoxStroke = new BasicStroke(1);
-
     // Position & Movement
     private double speed, direction;
     /**
@@ -140,6 +138,11 @@ public abstract class MovingEntity extends Entity {
         collisionTargets.clear();
     }
 
+    /**
+     * Override this function to implement additional visual effects upon collision,
+     * for interaction with entities, see the function entityInteraction
+     * @param collisionTargets: list containing the bounding boxes of the collision targets
+     */
     protected void collide(ArrayList<Rectangle> collisionTargets) {}
 
     /**
@@ -191,6 +194,8 @@ public abstract class MovingEntity extends Entity {
         }
     }
 
+    static private final Stroke nextBBoxStroke = new BasicStroke(1);
+
     @Override
     public void drawDebugInfo(Graphics2D g2d, Vector2D framePos) {
         super.drawDebugInfo(g2d, framePos);
@@ -229,7 +234,7 @@ public abstract class MovingEntity extends Entity {
     protected void updateSpriteCounter() {
         if (moving) {
             spriteCounter++;
-            if (spriteCounter == spriteUpdatePeriod) {
+            if (spriteCounter >= spriteUpdatePeriod) {
                 spriteCounter = 0;
                 currentSprite++;
                 currentSprite %= nbSprites;

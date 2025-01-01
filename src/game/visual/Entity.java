@@ -12,14 +12,9 @@ import java.awt.*;
 import static game.main.GamePanel.*;
 
 /**
- * Baseclass for anything that can be rendered.
+ * Baseclass for all entities (characters & objects).
  */
 public abstract class Entity implements Animation, DebugInfo {
-    static protected void checkBBox(Rectangle bBox) {
-        assert bBox != null;
-        assert !bBox.isEmpty();
-    }
-
     static public void createEntity(int x, int y, Class<? extends Entity> eClass, Object... initArgs) {
         try {
             Object[] args = new Object[initArgs.length + 2];
@@ -52,9 +47,6 @@ public abstract class Entity implements Animation, DebugInfo {
         }
     }
 
-    static private final Stroke bBoxStroke = new BasicStroke(2);
-    static private final Color bBoxColor = new Color(255, 0, 0, 150);
-
     /**
      * true if entity is always displayed on the background
      */
@@ -69,13 +61,14 @@ public abstract class Entity implements Animation, DebugInfo {
      * @param bBox relative coordinates of the bounding box.
      */
     protected Entity(@NotNull Rectangle bBox) {
-        checkBBox(bBox);
+        // Check bounding box
+        assert !bBox.isEmpty();
         this.bBox = bBox;
     }
 
     /**
      *
-     * @return the absolute position of the bounding box used in collision detection etc.
+     * @return the absolute position of the bounding box.
      */
     public final Rectangle getBBox() {
         return new Rectangle((int)x + bBox.x, (int)y + bBox.y, bBox.width, bBox.height);
@@ -119,11 +112,14 @@ public abstract class Entity implements Animation, DebugInfo {
         g2d.drawImage(imageAnchor.image(), getX() - imageAnchor.anchor().x - framePos.x, getY() - imageAnchor.anchor().y - framePos.y, null);
     }
 
+    private final Stroke bBoxStroke = new BasicStroke(2);
+    private final Color bBoxColor = Color.RED;
+
     @Override
     public void drawDebugInfo(Graphics2D g2d, Vector2D framePos) {
         // draw bbox
         g2d.setStroke(bBoxStroke);
-        g2d.setColor(Color.red);
+        g2d.setColor(bBoxColor);
         Rectangle bBox = getBBox();
         bBox.translate(-framePos.x, -framePos.y);
         g2d.drawRect(bBox.x, bBox.y, bBox.width, bBox.height);

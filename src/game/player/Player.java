@@ -12,10 +12,11 @@ import game.object.SuperObject;
 import game.main.*;
 import game.object.shield.Shield;
 import game.object.weapon.Weapon;
+import game.player.magic.FireBallMagic;
+import game.player.magic.Magic;
 import game.tile.TileManager;
 import game.visual.Entity;
 import game.projectile.Arrow;
-import game.projectile.FireBall;
 import game.visual.animations.Particle;
 import main.Sound;
 
@@ -30,17 +31,21 @@ public final class Player extends Character implements MovementAI {
 
     // Attack & damage
     private final Rectangle[] attackRange = {
-            new Rectangle(48-3, 21, 30, 16), new Rectangle(16, 48, 16, 30), new Rectangle(-30+3, 21, 30, 16), new Rectangle(16, -30, 16, 30)
+            new Rectangle(48-3, 21, 30, 16),
+            new Rectangle(16, 48, 16, 30),
+            new Rectangle(-30+3, 21, 30, 16),
+            new Rectangle(16, -30, 16, 30)
     };
     boolean attacking = false;
 
-    // PLAYER ATTRIBUTES
+    // Player attributes
     public int level;
     public int XP, nextLevelXP;
     public int coin;
     public final Weapon[] weapon = new Weapon[1];
     public final Shield[] shield = new Shield[1];
-    public Magic magicSpell = new FireBall(this);
+    public Magic magicSpell = new FireBallMagic(this);
+    public final int crawling_speed = 1;
 
     // Counters
     private int magicRefillCounter = 0;
@@ -53,15 +58,16 @@ public final class Player extends Character implements MovementAI {
         fixAttackingSpriteAnchor(spriteImages[1], 2);
     }
 
+    // Controls
+    private final int up_key = KeyEvent.VK_UP, down_key = KeyEvent.VK_DOWN,
+            left_key = KeyEvent.VK_LEFT, right_key = KeyEvent.VK_RIGHT,
+            attack_key = KeyEvent.VK_F, spell_key = KeyEvent.VK_R, shoot_key = KeyEvent.VK_V,
+            crawl_key = KeyEvent.VK_SHIFT;
+
     public final Inventory inventory = new Inventory(10);
-
-//    private final Animation walkinAnimation;
-
 
     public Player() {
         super(new Rectangle(9, 16, 30, 30));
-//        animation = walkingAnimation = new MovingSprite(spriteImages[0], .15, 2);
-//        invincibleAnimation = new InvincibleAnimation();
         super.spriteImages = spriteImages[0];
         nbSprites = 2;
         setSpriteUpdatePeriod(.15);
@@ -99,15 +105,15 @@ public final class Player extends Character implements MovementAI {
 
     public void updateAI() {
         // movement
-        setCurrentSpeed(keyHandler.isKeyPressed(KeyEvent.VK_SHIFT) ? 1 : speed);
+        setCurrentSpeed(keyHandler.isKeyPressed(crawl_key) ? crawling_speed : speed);
         moving = true;
-        if (keyHandler.isKeyPressed(keyHandler.upKey)) {
+        if (keyHandler.isKeyPressed(up_key)) {
             setDirection(Direction.UP);
-        } else if (keyHandler.isKeyPressed(keyHandler.downKey)) {
+        } else if (keyHandler.isKeyPressed(down_key)) {
             setDirection(Direction.DOWN);
-        } else if (keyHandler.isKeyPressed(keyHandler.rightKey)) {
+        } else if (keyHandler.isKeyPressed(right_key)) {
             setDirection(Direction.RIGHT);
-        } else if (keyHandler.isKeyPressed(keyHandler.leftKey)) {
+        } else if (keyHandler.isKeyPressed(left_key)) {
             setDirection(Direction.LEFT);
         } else {
             moving = false;
@@ -116,24 +122,23 @@ public final class Player extends Character implements MovementAI {
         assert TileManager.visible.contains(getNextBBox());
 
         // attacking
-        if (keyHandler.isKeyClicked(keyHandler.attackKey) && !attacking) {
+        if (keyHandler.isKeyClicked(attack_key) && !attacking) {
             attacking = true;
             Sound.playSoundEffect(Sound.parry);
             game.entityManager.collisionChecker.checkAttack(this);
             super.spriteImages = spriteImages[1];
             spriteCounter = 0;
-//            animation = new AttackingAnimation();
         }
 
         // magic spells
-        if (keyHandler.isKeyClicked(KeyEvent.VK_R)) {
+        if (keyHandler.isKeyClicked(spell_key)) {
             if (magic >= magicSpell.magicCost()) {
                 magicSpell.use();
                 magic -= magicSpell.magicCost();
             }
         }
         // shoot arrow
-        if (keyHandler.isKeyClicked(KeyEvent.VK_V)) {
+        if (keyHandler.isKeyClicked(shoot_key)) {
             new Arrow(this);
         }
 

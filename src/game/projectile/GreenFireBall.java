@@ -17,14 +17,9 @@ public class GreenFireBall extends Projectile {
     private final ImageAnchor imageAnchor;
 
     public GreenFireBall(double speed, double direction, Character source) {
-        super(new Rectangle(16, 16, 16, 16), source, speed);
+        super(new Rectangle(16, 16, 16, 16), source, speed, direction);
 
         imageAnchor = new ImageAnchor(UtilityTool.rotateImage(image, direction));
-//        animation = new GFA();
-
-        fire(direction);
-
-        assert isMoving();
     }
 
     @Override

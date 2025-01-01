@@ -72,7 +72,7 @@ public class GreenGuard extends Monster implements MovementAI {
     public void updateAI() {
         if (ctr > 2 * FPS) {
             System.out.println("fireball!!");
-            new GreenFireBall(2., Projectile.angleTowards(this, game.player), this);
+            new GreenFireBall(2., Projectile.getAngle(this, game.player), this);
             ctr = 0;
         }
         ctr++;

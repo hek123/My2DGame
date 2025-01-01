@@ -34,6 +34,7 @@ public class Arrow extends Projectile {
     }
 
     public final int damage;
+    public static final double speed = 5.5;
 
     private int ctr = 0;
     private Character target = null;
@@ -51,13 +52,11 @@ public class Arrow extends Projectile {
     }
 
     public Arrow(Character source) {
-        super(getBBox(source.getDirection()), source, 5.5);
+        super(getBBox(source.getDirection()), source, speed, source.getExactDirection());
         spriteImages = images;
         nbSprites = 1;
 
         damage = source.strength;
-
-        fire(source.getExactDirection());
     }
 
     @Override

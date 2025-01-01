@@ -136,7 +136,7 @@ public class UI {
     }
 
     public void update() {
-        if (keyHandler.isKeyClicked(KeyEvent.VK_A))
+        if (keyHandler.isKeyClicked(KeyEvent.VK_D))
             game.ui.debugInfo = !game.ui.debugInfo;
         if (Game.gameState == GameState.INVENTORY) itemGrabHandler.update();
     }

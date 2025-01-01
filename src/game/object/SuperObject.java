@@ -17,14 +17,13 @@ public abstract class SuperObject extends StillEntity implements InteractiveObje
      * resource folder containing object images
      */
     protected static final String imageFolder = "/object/";
-    protected static final Rectangle oneTile = new Rectangle(tileSize, tileSize);
 
     protected SuperObject(BufferedImage image) {
         this(new ImageAnchor(image));
     }
     @Deprecated
     protected SuperObject(ImageAnchor imageAnchor) {
-        this(oneTile, imageAnchor);
+        this(new Rectangle(tileSize, tileSize), imageAnchor);
         assert imageAnchor.anchor().x == 0 && imageAnchor.anchor().y == 0;
         assert imageAnchor.image().getWidth() == tileSize && imageAnchor.image().getHeight() == tileSize;
     }

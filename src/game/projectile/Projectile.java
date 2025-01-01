@@ -13,30 +13,14 @@ public abstract class Projectile extends MovingEntity {
     static protected String imageFolder = "/effects/";
 
     protected Character source;
-    protected final double speed;
 
-    private boolean isFired = false;
-
-    protected Projectile(Rectangle BBox, Character source, double speed) {
+    protected Projectile(Rectangle BBox, Character source, double speed, double direction) {
         super(BBox);
         this.source = source;
-        this.speed = speed;
-    }
+        setCurrentSpeed(speed);
+        setDirection(direction);
 
-    @Override
-    public boolean isSolid() {
-        return false;
-    }
-
-    @Override
-    protected void invisibleAction() {
-        game.entityManager.removeMovingEntityFromMap(this);
-    }
-
-    protected void fire(double direction) {
-        assert !isFired;
-
-        // UnCollide
+        // UnCollide with source
         double vx_n = Math.cos(direction), vy_n = Math.sin(direction);
         setPosition(source.getX(), source.getY());
 
@@ -49,17 +33,24 @@ public abstract class Projectile extends MovingEntity {
             move(vx_n, vy_n);
         }
 
-        setDirection(direction);
-        setCurrentSpeed(speed);
         moving = true;
         collisionExceptions.add(source);
 
         game.entityManager.addMovingEntityToMap(this);
-        isFired = true;
+    }
+
+    @Override
+    public boolean isSolid() {
+        return false;
+    }
+
+    @Override
+    protected void invisibleAction() {
+        game.entityManager.removeMovingEntityFromMap(this);
     }
 
     // ### UTILS ###
-    static public double angleTowards(Character source, Character target) {
+    static public double getAngle(Character source, Character target) {
         Vector2D vec = Vector2D.sub(target.getCenterPos(), source.getCenterPos());
         return Math.atan2(vec.y, vec.x);
     }
