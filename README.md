@@ -1,1 +1,1 @@
-Based on the tutorial [How to make a 2D game in java](https://www.youtube.com/playlist?list=PL_QPQmz5C6WUF-pOQDsbsKbaBZqXj4qSq) from RyiSnow
+Personal project where the goal was to learn java. I started from the tutorial [How to make a 2D game in java](https://www.youtube.com/playlist?list=PL_QPQmz5C6WUF-pOQDsbsKbaBZqXj4qSq) from RyiSnow. After a certain point I started doing things myself and I didn't stick to the tutorial.
