@@ -8,7 +8,7 @@ import game.item.Item;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static game.main.GamePanel.game;
+import static game.main.Game.game;
 import static game.main.GamePanel.tileSize;
 
 public class ObjectKey extends SuperObject implements Item {

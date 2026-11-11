@@ -4,12 +4,13 @@ import Utility.ImageAnchor;
 import Utility.Vector2D;
 import game.character.Character;
 import game.main.DebugInfo;
+import game.main.GamePanel;
 import game.visual.animations.Animation;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 /**
  * Baseclass for all entities (characters & objects).
@@ -48,7 +49,7 @@ public abstract class Entity implements Animation, DebugInfo {
     }
 
     /**
-     * true if entity is always displayed on the background
+     * true if entity should always be displayed on the background
      */
     public boolean background;
     public boolean removeIfInvisible = false;
@@ -131,7 +132,7 @@ public abstract class Entity implements Animation, DebugInfo {
 
     @Override
     public final int getLayerLevel() {
-        if (background) return getY() - game.tileManager.tileMap.getHeight() * tileSize;
+        if (background) return getY() - game.tileManager.tileMap.getHeight() * GamePanel.tileSize;
         else return getY();
     }
 

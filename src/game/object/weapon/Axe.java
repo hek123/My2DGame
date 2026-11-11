@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;
 
-import static game.main.GamePanel.game;
+import static game.main.Game.game;
 
 public class Axe extends SuperObject implements Weapon {
     static final private ImageAnchor image = new ImageAnchor(UtilityTool.loadScaledImage(imageFolder + "axe.png"));

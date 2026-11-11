@@ -4,19 +4,19 @@ import Utility.ImageAnchor;
 import Utility.UtilityTool;
 import Utility.Vector2D;
 import game.character.movementAI.MovementAI;
+import game.event.Damage;
 import game.player.Player;
 import game.projectile.GreenFireBall;
 import game.projectile.Projectile;
 import game.visual.Entity;
-import game.visual.MovingEntity;
-import game.visual.animations.Animation;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
+import static game.main.GamePanel.tileSize;
+import static game.main.GamePanel.FPS;
 
 public class GreenGuard extends Monster implements MovementAI {
     static final private int nbSprites = 6, fps = 10;
@@ -64,7 +64,7 @@ public class GreenGuard extends Monster implements MovementAI {
     @Override
     protected void entityInteraction(Entity entity) {
         if (entity instanceof Player player) {
-            player.receiveDamageFrom(passiveDamage, this);
+            player.receiveDamage(new Damage(this, passiveDamage, 0));
         }
     }
 

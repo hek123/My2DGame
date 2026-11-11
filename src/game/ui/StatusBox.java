@@ -1,16 +1,13 @@
 package game.ui;
 
 import Utility.UtilityTool;
-import Utility.Vector2D;
 import game.player.Player;
-import game.tile.TileManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Map;
-import java.util.function.Function;
 
-import static game.main.GamePanel.*;
+import static game.main.GamePanel.tileSize;
+import static game.main.Game.game;
 
 public class StatusBox extends subWindow {
     public static final int fontSize = (int) (.4 * tileSize);

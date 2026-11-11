@@ -6,14 +6,10 @@ import game.ui.MouseHandler;
 import game.ui.Scalable;
 import main.Sound;
 
-import javax.crypto.Cipher;
+import static game.main.Game.game;
+
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.beans.PropertyChangeListener;
 
 
 public class GamePanel extends JPanel implements Scalable {
@@ -31,10 +27,8 @@ public class GamePanel extends JPanel implements Scalable {
     private final JButton pauseButton;
 
     // BACKGROUND STUFF
-    static public final MyKeyHandler keyHandler = new MyKeyHandler();
-    static public final MouseHandler mouseHandler = new MouseHandler();
-
-    static public Game game;
+    public final MyKeyHandler keyHandler = new MyKeyHandler();
+    public final MouseHandler mouseHandler = new MouseHandler();
 
     public GamePanel() {
         super(true);  // Provides better rendering performance
@@ -78,9 +72,7 @@ public class GamePanel extends JPanel implements Scalable {
     }
 
     public void startNewGame() {
-        assert game == null;
-        game = new Game();
-        game.startGame();
+        new Game(this).startGame();
         System.out.println("started new game");
 
         Sound.playMusic(Sound.BBA);
@@ -88,10 +80,8 @@ public class GamePanel extends JPanel implements Scalable {
 
     public void stopGame() {
         System.out.println("stop game");
-        if (game != null) {
-            game.stopGame();
-            game = null;
-        }
+        game.stopGame();
+
         Sound.stopMusic();
     }
 

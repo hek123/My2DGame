@@ -3,6 +3,7 @@ package game.visual;
 import Utility.ImageAnchor;
 import Utility.Vector2D;
 import game.character.Direction;
+import game.main.GamePanel;
 import game.tile.TileManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +14,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.function.Supplier;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 /**
  * Implements and extends Entity for moving entities
@@ -97,7 +98,7 @@ public abstract class MovingEntity extends Entity {
      * @return bounding box
      */
     public final Rectangle getNextBBox() {
-        return getBBox(getVx() * tileSize / FPS, getVy() * tileSize / FPS);
+        return getBBox(getVx() * GamePanel.tileSize / GamePanel.FPS, getVy() * GamePanel.tileSize / GamePanel.FPS);
     }
 
     protected final Rectangle getBBox(double dx, double dy) {
@@ -160,7 +161,7 @@ public abstract class MovingEntity extends Entity {
         game.entityManager.collisionChecker.checkEntity(this);
         if (moving) {
             if (collisionTargets.isEmpty())
-                move(getVx() * tileSize / FPS, getVy() * tileSize / FPS);
+                move(getVx() * GamePanel.tileSize / GamePanel.FPS, getVy() * GamePanel.tileSize / GamePanel.FPS);
             else
                 collide();
         }
@@ -186,10 +187,10 @@ public abstract class MovingEntity extends Entity {
         if (TileManager.visible.intersects(getBBox())) {
             // character specific action
             action();
-
             // move
             move();
         } else {
+            // in case action is required even when character is not visible
             invisibleAction();
         }
     }
@@ -224,7 +225,7 @@ public abstract class MovingEntity extends Entity {
     protected int nbSprites = -1;
 
     public final void setSpriteUpdatePeriod(double updatePeriod) {
-        spriteUpdatePeriod = (int) Math.round(updatePeriod * FPS);
+        spriteUpdatePeriod = (int) Math.round(updatePeriod * GamePanel.FPS);
     }
 
     @Override
@@ -257,8 +258,8 @@ public abstract class MovingEntity extends Entity {
 
     static public void fixAttackingSpriteAnchor(ImageAnchor[][] spriteImages, int nbSprites) {
         for (int i = 0; i < nbSprites; i++) {
-            spriteImages[dirToInt(Direction.UP)][i].anchor().y = spriteImages[dirToInt(Direction.UP)][i].image().getHeight() - tileSize;
-            spriteImages[dirToInt(Direction.LEFT)][i].anchor().x = spriteImages[dirToInt(Direction.LEFT)][i].image().getWidth() - tileSize;
+            spriteImages[dirToInt(Direction.UP)][i].anchor().y = spriteImages[dirToInt(Direction.UP)][i].image().getHeight() - GamePanel.tileSize;
+            spriteImages[dirToInt(Direction.LEFT)][i].anchor().x = spriteImages[dirToInt(Direction.LEFT)][i].image().getWidth() - GamePanel.tileSize;
         }
     }
 

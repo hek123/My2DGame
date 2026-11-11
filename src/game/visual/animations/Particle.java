@@ -1,8 +1,9 @@
 package game.visual.animations;
 
 import Utility.Vector2D;
+import game.main.GamePanel;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 import java.awt.*;
 
@@ -46,7 +47,7 @@ public class Particle implements Animation {
         y += vy;
         vy += gravity;
 
-        if ((double) ctr / FPS > lifeTime)
+        if ((double) ctr / GamePanel.FPS > lifeTime)
             game.entityManager.removeAnimationFromMap(this);
         ctr++;
     }
@@ -59,7 +60,7 @@ public class Particle implements Animation {
 
     @Override
     public int getLayerLevel() {
-        return game.tileManager.tileMap.getHeight() * tileSize;
+        return game.tileManager.tileMap.getHeight() * GamePanel.tileSize;
     }
 
     @Override

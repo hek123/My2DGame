@@ -8,7 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
+import static game.main.GamePanel.tileSize;
 
 public class SkeletonLord extends Monster {
     static private final ImageAnchor[][] images = loadSpriteImages(imageFolder, "skeletonlord", 2);

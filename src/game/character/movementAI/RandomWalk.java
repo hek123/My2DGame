@@ -30,7 +30,7 @@ public class RandomWalk implements MovementAI, TerritoryBound {
         dirStates = still ? 5 : 4;
 
         this.territory = territory;
-        if (territory != null) assert territory.contains(this.character.getBBox());
+        assert (territory == null) || territory.contains(this.character.getBBox());
     }
     public RandomWalk(Character character, double lambda, boolean still) {
         this(character, lambda, still, null);
@@ -66,9 +66,9 @@ public class RandomWalk implements MovementAI, TerritoryBound {
                     case RIGHT -> Direction.LEFT;
                     case LEFT -> Direction.RIGHT;
                 });
-                assert territory.contains(character.getNextBBox());
                 actionCounter = 0;
             }
+            assert territory.contains(character.getNextBBox());
         }
     }
 

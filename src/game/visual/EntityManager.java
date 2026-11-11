@@ -9,7 +9,7 @@ import game.tile.TileManager;
 import game.visual.animations.Animation;
 import org.jetbrains.annotations.NotNull;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 import java.awt.*;
 import java.util.*;

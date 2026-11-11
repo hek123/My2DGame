@@ -5,11 +5,18 @@ import Utility.UtilityTool;
 import Utility.Vector2D;
 import game.character.movementAI.MovementAI;
 import game.character.movementAI.TerritoryBound;
+import game.event.Damage;
+import game.character.DamageState;
+import game.main.GamePanel;
+import game.visual.Entity;
 import game.visual.MovingEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.Objects;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
+import static game.main.GamePanel.FPS;
 
 /**
  * A Character extends the MovingEntity class -which only implements graphics related methods- to a character with properties
@@ -27,7 +34,7 @@ public abstract class Character extends MovingEntity {
     public int magic, maxMagic;
 
     // States
-    public boolean invincible = false, dying = false;
+    public DamageState damage_state = DamageState.normal;
     protected MovementAI movementAI;
 
     // counters
@@ -38,6 +45,11 @@ public abstract class Character extends MovingEntity {
         super(BBox);
 
         setDirection(Direction.DOWN);
+    }
+
+    @Override
+    public boolean isSolid() {
+        return true;
     }
 
     @Override
@@ -52,11 +64,6 @@ public abstract class Character extends MovingEntity {
                 g2d.fillRect(territory.x - framePos.x, territory.y - framePos.y, territory.width, territory.height);
             }
         }
-    }
-
-    @Override
-    public boolean isSolid() {
-        return true;
     }
 
     public final int getMaxHealth() {
@@ -79,18 +86,32 @@ public abstract class Character extends MovingEntity {
 
     @Override
     protected final void action() {
-        if (dying)
-            System.err.println("The dead are walking!");
-
-        if (movementAI != null) movementAI.updateAI();
-
-        if (invincible) {
-            damageCoolDownCounter++;
-            if (damageCoolDownCounter >= damageCoolDownTime) {
-                damageCoolDownCounter = 0;
-                invincible = false;
+        switch (damage_state) {
+            case normal -> {
+                if (movementAI != null) movementAI.updateAI();
             }
+            case dying -> System.err.println("The dead are walking!");
+            case invincible -> {
+                damageCoolDownCounter++;
+                if (damageCoolDownCounter >= damageCoolDownTime) {
+                    damageCoolDownCounter = 0;
+                    damage_state = DamageState.normal;
+                }
+            }
+
         }
+//        if (dying)
+//            System.err.println("The dead are walking!");
+//
+//        if (movementAI != null) movementAI.updateAI();
+//
+//        if (invincible) {
+//            damageCoolDownCounter++;
+//            if (damageCoolDownCounter >= damageCoolDownTime) {
+//                damageCoolDownCounter = 0;
+//                invincible = false;
+//            }
+//        }
     }
 
 
@@ -98,28 +119,40 @@ public abstract class Character extends MovingEntity {
 
     @Override
     public void attackedBy(Character character) {
-        receiveDamageFrom(character.getAttackDamage(), character);
+        receiveDamage(new Damage(character, character.getAttackDamage(), 0));
     }
 
     /**
      * called when entity receives damage
-     * @param damage the amount of damage received
-     * @param source from which character the damage originates
+     * @param damage the damage received
      */
-    public void receiveDamageFrom(int damage, Character source) {
-        if (isDead()) return;
-        if (!invincible) {
-            health -= (int) (Math.pow(1.5, -getDefence()) * damage);
+    public void receiveDamage(@NotNull Damage damage) {
+        if (damage_state == DamageState.normal) {
+            assert (!isDead());
+            health -= (int) (Math.pow(1.5, -getDefence()) * damage.physical_damage());
             if (health <= 0) {
                 health = 0;
-                killedBy(source);
-                source.hasKilled(this);
-                dying = true;
+                damage.source().hasKilled(this);
+                killedBy(damage.source());
+                damage_state = DamageState.dying;
                 game.entityManager.removeMovingEntityFromMap(this);
             } else {
-                invincible = true;
+                damage_state = DamageState.invincible;
             }
         }
+//        if (isDead()) return;
+//        if (!invincible) {
+//            health -= (int) (Math.pow(1.5, -getDefence()) * damage.physical_damage());
+//            if (health <= 0) {
+//                health = 0;
+//                damage.source().hasKilled(this);
+//                killedBy(damage.source());
+//                dying = true;
+//                game.entityManager.removeMovingEntityFromMap(this);
+//            } else {
+//                invincible = true;
+//            }
+//        }
     }
 
     /**
@@ -145,7 +178,7 @@ public abstract class Character extends MovingEntity {
 
     @Override
     public void updateA() {
-        if (dying) {
+        if (damage_state == DamageState.dying) {
             if (dyingCounter >= FPS / 2) {
                 System.out.println("dead");
                 game.entityManager.removeAnimationFromMap(this);
@@ -157,18 +190,36 @@ public abstract class Character extends MovingEntity {
     }
 
     @Override
+    protected void entityInteraction(Entity entity) {
+
+    }
+
+    @Override
     public void drawA(Graphics2D g2d, Vector2D framePos) {
-        if (dying) {
-            if (dyingCounter % (FPS / 6) < (FPS / 12))
-                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
-            drawSprite(g2d, framePos);
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
-        } else {
-            if (invincible && damageCoolDownCounter % (FPS / 3) < (FPS / 6))
-                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
-            drawSprite(g2d, framePos);
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
+        switch (damage_state) {
+            case dying -> {
+                if (dyingCounter % (FPS / 6) < (FPS / 12))
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+            }
+            case invincible -> {
+                if (damageCoolDownCounter % (FPS / 3) < (FPS / 6))
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
+            }
         }
+        drawSprite(g2d, framePos);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
+
+//        if (dying) {
+//            if (dyingCounter % (FPS / 6) < (FPS / 12))
+//                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+//            drawSprite(g2d, framePos);
+//            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
+//        } else {
+//            if (invincible && damageCoolDownCounter % (FPS / 3) < (FPS / 6))
+//                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
+//            drawSprite(g2d, framePos);
+//            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.f));
+//        }
     }
 
     // ### UTILS ###

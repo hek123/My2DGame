@@ -2,10 +2,9 @@ package game.main;
 
 import main.BaseKeyAdapter;
 import main.Main;
+import static game.main.Game.game;
 
 import java.awt.event.KeyEvent;
-
-import static game.main.GamePanel.game;
 
 
 public class MyKeyHandler extends BaseKeyAdapter {
@@ -17,15 +16,11 @@ public class MyKeyHandler extends BaseKeyAdapter {
 
         switch (Game.gameState) {
             case PLAY -> {
-                if (isKeyClicked(pauseKey)) Game.gameState = GameState.PAUSE;
                 if (isKeyClicked(KeyEvent.VK_I)) Game.gameState = GameState.INVENTORY;
                 if (isKeyClicked(KeyEvent.VK_S)) {
                     game.ui.setStatus();
                     Game.gameState = GameState.STATUS;
                 }
-            }
-            case PAUSE -> {
-                if (isKeyClicked(pauseKey)) Game.gameState = GameState.PLAY;
             }
             case DIALOGUE -> {
                 if (isKeyPressed(KeyEvent.VK_ENTER)) Game.gameState = GameState.PLAY;
@@ -40,7 +35,7 @@ public class MyKeyHandler extends BaseKeyAdapter {
                 }
             }
         }
-        if (isKeyClicked(KeyEvent.VK_M)) {
+        if (isKeyClicked(pauseKey)) {
             game.toggleOptions();
         }
         if (isKeyClicked(KeyEvent.VK_ESCAPE)) Main.goToMainMenu();

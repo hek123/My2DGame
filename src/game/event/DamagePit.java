@@ -1,6 +1,6 @@
 package game.event;
 
-import static game.main.GamePanel.game;
+import static game.main.Game.game;
 
 
 public class DamagePit extends Event {
@@ -12,6 +12,6 @@ public class DamagePit extends Event {
     @Override
     public void action() {
         game.ui.dialogue("you fall into a pit", game.player.getBBox(), game.player.getDirection());
-        game.player.receiveDamageFrom(1, null);
+        game.player.receiveDamage(new Damage(null, 1, 0));
     }
 }

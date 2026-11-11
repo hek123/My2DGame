@@ -11,6 +11,7 @@ import game.visual.Entity;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static game.main.Game.game;
 import static game.main.GamePanel.*;
 
 public class Arrow extends Projectile {
@@ -33,7 +34,7 @@ public class Arrow extends Projectile {
         }
     }
 
-    public final int damage;
+//    public final int damage;
     public static final double speed = 5.5;
 
     private int ctr = 0;
@@ -56,7 +57,7 @@ public class Arrow extends Projectile {
         spriteImages = images;
         nbSprites = 1;
 
-        damage = source.strength;
+//        damage = source.strength;
     }
 
     @Override
@@ -72,15 +73,22 @@ public class Arrow extends Projectile {
     }
 
     @Override
+    protected int projectileDamage(Character source) {
+        return source.strength;
+    }
+
+    @Override
     public void entityInteraction(Entity entity) {
-        if (entity instanceof Player) {
-            setCurrentSpeed(speed);
-            moving = true;
-        } else if (entity instanceof Character character) {
+        super.entityInteraction(entity);
+//        if (entity instanceof Player) {
+//            setCurrentSpeed(speed);
+//            moving = true;
+//        } else
+        if (entity instanceof Character character) {
             target = character;
             anchor.x = getX() - target.getX();
             anchor.y = getY() - target.getY();
-            character.receiveDamageFrom(damage, source);
+//            character.receiveDamageFrom(damage, source);
         }
     }
 }

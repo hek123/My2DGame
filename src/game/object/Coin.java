@@ -4,7 +4,7 @@ import Utility.ImageAnchor;
 import Utility.UtilityTool;
 import game.player.Player;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 
 public class Coin extends SuperObject {

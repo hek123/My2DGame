@@ -11,7 +11,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
+import static game.main.GamePanel.tileSize;
 
 public class FireBall extends Projectile {
     private static final ImageAnchor[][] spriteImages = new ImageAnchor[4][2];
@@ -65,13 +66,18 @@ public class FireBall extends Projectile {
     }
 
     @Override
-    public void entityInteraction(Entity entity) {
-        if (collisionExceptions.contains(entity)) {
-            System.err.println("Fireball hit Player");
-        } else if (entity instanceof Character character) {
-            character.receiveDamageFrom(source.strength + 1, source);
-        }
+    protected int projectileDamage(Character source) {
+        return source.strength + 1;
     }
+
+//    @Override
+//    public void entityInteraction(Entity entity) {
+//        if (collisionExceptions.contains(entity)) {
+//            System.err.println("Fireball hit Player");
+//        } else if (entity instanceof Character character) {
+//            character.receiveDamage(newsource.strength + 1, source);
+//        }
+//    }
 
     @Override
     protected void collide(ArrayList<Rectangle> collisionTargets) {

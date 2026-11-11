@@ -11,24 +11,24 @@ import java.text.ParseException;
 public class TileEditorPanel extends JPanel {
     CardLayout cardLayout = new CardLayout();
 
-    JPanel startScreen = new StartScreen();
-    JPanel newMapScreen = new NewMapScreen();
+    StartScreen startScreen = new StartScreen();
+    NewMapScreen newMapScreen = new NewMapScreen();
     MapScreen mapScreen = new MapScreen();
 
     public TileEditorPanel() {
         super(false);
         setLayout(cardLayout);
 
-        add(startScreen, "start");
-        add(newMapScreen, "new");
-        add(mapScreen, "tileEditor");
+        add(startScreen, startScreen.getName());
+        add(newMapScreen, newMapScreen.getName());
+        add(mapScreen, mapScreen.getName());
 
         try {
             mapScreen.loadMap("resources/maps/world01.txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        cardLayout.show(this, "tileEditor");
+        cardLayout.show(this, mapScreen.getName());
         mapScreen.requestFocus();
 
         addKeyListener(new BaseKeyAdapter());
@@ -38,6 +38,7 @@ public class TileEditorPanel extends JPanel {
         StartScreen() {
             super(new GridBagLayout());
             setFocusable(false);
+            setName("StartScreen");
             GridBagConstraints c = new GridBagConstraints();
 
             JLabel title = new JLabel("Welcome to my Tile Editor");
@@ -47,7 +48,7 @@ public class TileEditorPanel extends JPanel {
             add(title, c);
 
             JButton newMap = new TEButton("Create New Map");
-            newMap.addActionListener(e -> cardLayout.show(TileEditorPanel.this, "new"));
+            newMap.addActionListener(e -> cardLayout.show(TileEditorPanel.this, newMapScreen.getName()));
             c.gridy = 1;
             add(newMap, c);
         }
@@ -64,6 +65,7 @@ public class TileEditorPanel extends JPanel {
         NewMapScreen() {
             super(new GridBagLayout());
             setFocusable(false);
+            setName("NewMapScreen");
             GridBagConstraints c = new GridBagConstraints();
 
             NumberFormat intFormat = NumberFormat.getNumberInstance();
@@ -102,7 +104,7 @@ public class TileEditorPanel extends JPanel {
             createButton.addActionListener(e -> {
                 if (validateInput() ) {
                     mapScreen.newMap(name, width, height);
-                    cardLayout.show(TileEditorPanel.this, "tileEditor");
+                    cardLayout.show(TileEditorPanel.this, mapScreen.getName());
                     mapScreen.requestFocus();
                 } else {
                     System.err.println("Invalid input");

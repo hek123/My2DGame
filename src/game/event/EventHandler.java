@@ -2,15 +2,20 @@ package game.event;
 
 import game.character.Direction;
 import game.main.GamePanel;
+import game.main.Game;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static game.main.GamePanel.game;
+//import static game.main.GamePanel.game;
 
 public class EventHandler {
-    public EventHandler() {
+    private final Game game;
+
+    public EventHandler(Game game) {
+        this.game = game;
+
         setEvents();
     }
 

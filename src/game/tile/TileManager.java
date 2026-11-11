@@ -1,19 +1,16 @@
 package game.tile;
 
 import Utility.Vector2D;
-import game.main.Game;
 import game.ui.Scalable;
 
 import java.awt.*;
 import java.io.IOException;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
+import static game.main.GamePanel.tileSize;
 
 
 public class TileManager implements Scalable {
-    static private final Color gridLineColor = new Color(180, 180, 180, 200);
-    static private final Stroke gridLineStroke = new BasicStroke(1);
-
     public final TileMap tileMap;
 
     public Vector2D framePosition = new Vector2D();
@@ -45,6 +42,8 @@ public class TileManager implements Scalable {
         visible.y = framePosition.y = y;
     }
 
+    static private final Color gridLineColor = new Color(180, 180, 180, 200);
+    static private final Stroke gridLineStroke = new BasicStroke(1);
     public void draw(Graphics2D g2d, Vector2D framePosition) {
         tileMap.paintWindow(g2d, visible, tileSize);
 

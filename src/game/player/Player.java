@@ -3,10 +3,12 @@ package game.player;
 import Utility.ImageAnchor;
 import Utility.Vector2D;
 import game.character.Character;
+import game.character.DamageState;
 import game.character.Direction;
 import game.character.monster.*;
 import game.character.movementAI.MovementAI;
 import game.character.npc.NPC;
+import game.event.Damage;
 import game.inventory.Inventory;
 import game.object.SuperObject;
 import game.main.*;
@@ -20,7 +22,7 @@ import game.projectile.Arrow;
 import game.visual.animations.Particle;
 import main.Sound;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -28,6 +30,8 @@ import java.awt.event.KeyEvent;
 
 public final class Player extends Character implements MovementAI {
     static private final Stroke attackBoxStroke = new BasicStroke(1);
+
+    private final MyKeyHandler keyHandler;
 
     // Attack & damage
     private final Rectangle[] attackRange = {
@@ -66,11 +70,13 @@ public final class Player extends Character implements MovementAI {
 
     public final Inventory inventory = new Inventory(10);
 
-    public Player() {
+    public Player(MyKeyHandler keyHandler) {
         super(new Rectangle(9, 16, 30, 30));
         super.spriteImages = spriteImages[0];
         nbSprites = 2;
         setSpriteUpdatePeriod(.15);
+
+        this.keyHandler = keyHandler;
 
         setPosition(23 * GamePanel.tileSize, 21 * GamePanel.tileSize);
         game.entityManager.addEntityToMap(this);
@@ -145,7 +151,7 @@ public final class Player extends Character implements MovementAI {
         // Magic refillCounter
         if (magic < maxMagic) {
             magicRefillCounter++;
-            if (magicRefillCounter > 2*FPS) {
+            if (magicRefillCounter > 2 * GamePanel.FPS) {
                 magic++;
                 magicRefillCounter = 0;
             }
@@ -175,7 +181,7 @@ public final class Player extends Character implements MovementAI {
         } else if (entity instanceof NPC npc) {
             npc.speak(this);
         } else if (entity instanceof Monster monster) {
-            receiveDamageFrom(monster.passiveDamage, monster);
+            receiveDamage(new Damage(monster, monster.passiveDamage, 0));
             Sound.playSoundEffect(Sound.receiveDamage);
         }
     }
@@ -236,8 +242,8 @@ public final class Player extends Character implements MovementAI {
     public void drawA(Graphics2D g2d, Vector2D framePos) {
         super.drawA(g2d, framePos);
 
-        if (invincible) {
-            g2d.setColor((damageCoolDownCounter % (FPS / 2) < FPS / 4) ? red : transpRed);
+        if (damage_state == DamageState.invincible) {
+            g2d.setColor((damageCoolDownCounter % (GamePanel.FPS / 2) < GamePanel.FPS / 4) ? red : transpRed);
             g2d.setStroke(stroke);
             g2d.drawRect(width, width, TileManager.visible.width - 2 * width, TileManager.visible.height - 2 * width);
         }

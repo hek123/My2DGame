@@ -5,11 +5,12 @@ import Utility.UtilityTool;
 import Utility.Vector2D;
 import game.character.Character;
 import game.visual.Entity;
+import game.event.Damage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static game.main.GamePanel.game;
+import static game.main.Game.game;
 
 public class GreenFireBall extends Projectile {
     static private final BufferedImage image = UtilityTool.loadScaledImage(imageFolder + "GreenFireball.png");
@@ -23,19 +24,24 @@ public class GreenFireBall extends Projectile {
     }
 
     @Override
-    protected void entityInteraction(Entity entity) {
-        if (collisionExceptions.contains(entity)) {
-            System.err.println("Fireball hit Source");
-        } else if (entity instanceof Character character) {
-            character.receiveDamageFrom(source.strength, source);
-        } //else if (entity instanceof FireBall fireBall) {
+    protected int projectileDamage(Character source) {
+        return source.strength;
+    }
+
+    //    @Override
+//    protected void entityInteraction(Entity entity) {
+//        if (collisionExceptions.contains(entity)) {
+//            System.err.println("Fireball hit Source");
+//        } else if (entity instanceof Character character) {
+//            character.receiveDamage(new Damage(source, source.strength, 0));
+//        } //else if (entity instanceof FireBall fireBall) {
 //            System.out.println("fireWorks");
 //            moving = false;
 //            fireBall.addCollisionTarget(this.getBBox());
 ////            fireBall.moving = false;
 ////            fireBall.entityInteraction(this);
 //        }
-    }
+//    }
 
     @Override
     protected void action() {
@@ -44,9 +50,7 @@ public class GreenFireBall extends Projectile {
 
     @Override
     public void attackedBy(Character character) {
-        setDirection(getExactDirection() + Math.PI);
-        collisionExceptions.remove(source);
-        source = character;
+        bounce(character);
     }
 
     @Override

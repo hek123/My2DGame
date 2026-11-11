@@ -2,9 +2,9 @@ package game.ui;
 
 import Utility.Vector2D;
 import game.character.Direction;
-import game.tile.TileManager;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
+import static game.main.GamePanel.tileSize;
 
 import java.awt.*;
 

@@ -4,7 +4,7 @@ import Utility.ImageAnchor;
 import Utility.UtilityTool;
 import game.player.Player;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 public class Heart extends SuperObject {
     private static final ImageAnchor image = new ImageAnchor(UtilityTool.loadScaledImage(imageFolder + "heart_full.png"));

@@ -13,19 +13,18 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
-import static game.main.GamePanel.*;
-import static main.Main.gamePanel;
 import static main.Main.optionPanel;
 
 
 public class Game {
+    private final GamePanel gamePanel;
+
     public TileManager tileManager;
     public Player player;
     public UI ui;
     public EntityManager entityManager;
     public EventHandler eventHandler;
 
-    private AssetSetter assetSetter;
     public final ArrayList<DebugInfo> debugInfoArrayList = new ArrayList<>();
 
     private ScheduledThreadPoolExecutor gameThread;
@@ -37,26 +36,40 @@ public class Game {
     static public @NotNull GameState gameState = GameState.FINISHED;
     static public long gameCounter;
 
+    // Global variable
+    static public Game game = null;
+
+    public Game(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+        System.out.println("Create Game object");
+
+        assert game == null;
+        game = this;
+
+        initGame();
+    }
+
     private void initGame() {
+        System.out.println("Init game");
+
         tileManager = new TileManager("resources/maps/world01.txt");
         entityManager = new EntityManager();
-        eventHandler = new EventHandler();
-        player = new Player();
-        ui = new UI();
+        eventHandler = new EventHandler(this);
+        player = new Player(gamePanel.keyHandler);
+        ui = new UI(gamePanel);
 
-        assetSetter = new AssetSetter(this);
-        assetSetter.setDefaultObjects();
-        assetSetter.setNPC();
-        assetSetter.setMonster();
+        AssetSetter.setDefaultObjects();
+        AssetSetter.setNPC();
+        AssetSetter.setMonster();
     }
 
     public void startGame() {
-        initGame();
+        System.out.println("Start game");
 
         System.out.println(gamePanel.getSize());
         Scalable.scaleAllWindows(gamePanel.getSize());
 
-        keyHandler.reset();
+        gamePanel.keyHandler.reset();
 
         gameState = GameState.PLAY;
         gameCounter = 0;
@@ -67,7 +80,7 @@ public class Game {
     }
 
     private void startGameLoop() {
-        scheduledFuture = gameThread.scheduleAtFixedRate(this::gameLoop, 0, 1_000_000_000 / FPS, TimeUnit.NANOSECONDS);
+        scheduledFuture = gameThread.scheduleAtFixedRate(this::gameLoop, 0, 1_000_000_000 / GamePanel.FPS, TimeUnit.NANOSECONDS);
     }
     private void stopGameLoop() {
         scheduledFuture.cancel(false);
@@ -81,11 +94,15 @@ public class Game {
     }
 
     public void stopGame() {
+        assert game != null;
+
         entityManager.clearMap();
 
         stopGameLoop();
 
         gameState = GameState.FINISHED;
+
+        game = null;
     }
 
     public void pauseGame(boolean pause) {
@@ -108,9 +125,9 @@ public class Game {
     }
 
     void update() {
-        if (fpsUpdateCtr == FPS / 2) {
+        if (fpsUpdateCtr == GamePanel.FPS / 2) {
             long time = System.nanoTime();
-            fps = ((double) fpsUpdateCtr) / ((time - nanoTime) * 1e-9);
+            GamePanel.fps = ((double) fpsUpdateCtr) / ((time - nanoTime) * 1e-9);
             fpsUpdateCtr = 0;
             nanoTime = time;
         }
@@ -118,9 +135,9 @@ public class Game {
 
         if (gameState != GameState.FINISHED) {
             if (gameState == GameState.PLAY) {
-                game.player.update();
+                player.update();
 
-                game.tileManager.update();
+                tileManager.update();
 
                 entityManager.updateMovingEntities();
                 entityManager.updateAnimations();
@@ -152,7 +169,7 @@ public class Game {
     }
 
     public void toggleOptions() {
-        game.pauseGame(!optionPanel.visible);
+        pauseGame(!optionPanel.visible);
         optionPanel.toggle();
     }
 }

@@ -3,14 +3,16 @@ package game.character.monster;
 import Utility.ImageAnchor;
 import game.character.Character;
 import game.character.movementAI.RandomWalk;
+import game.event.Damage;
 import game.object.Coin;
 import game.object.Heart;
 import game.player.Player;
 import game.visual.Entity;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 public class GreenSlime extends Monster {
     static final ImageAnchor[][] spriteImages = loadSimpleSpriteImages(imageFolder, "greenslime", 2);
@@ -39,9 +41,9 @@ public class GreenSlime extends Monster {
     }
 
     @Override
-    public void receiveDamageFrom(int damage, Character source) {
-        super.receiveDamageFrom(damage, source);
-        setDirection(source.getDirection());
+    public void receiveDamage(@NotNull Damage damage) {
+        super.receiveDamage(damage);
+        setDirection(damage.source().getDirection());
     }
 
     @Override
@@ -60,7 +62,7 @@ public class GreenSlime extends Monster {
     @Override
     public void entityInteraction(Entity entity) {
         if (entity instanceof Player player) {
-            player.receiveDamageFrom(getAttackDamage(), this);
+            player.receiveDamage(new Damage(this, getAttackDamage(), 0));
         }
     }
 

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;
 
-import static game.main.GamePanel.game;
+import static game.main.Game.game;
 
 public class Sword extends SuperObject implements Weapon {
     static private final ImageAnchor image = new ImageAnchor(UtilityTool.loadScaledImage(imageFolder + "sword_normal.png"), new Vector2D(0, 0));

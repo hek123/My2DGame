@@ -1,6 +1,7 @@
 package main;
 
 import TileEditor.TileEditorPanel;
+import game.main.Game;
 import game.main.GamePanel;
 import game.main.OptionPanel;
 import game.ui.Scalable;
@@ -45,8 +46,8 @@ public class Main extends JFrame {
         cardPanel.add(mainPanel, main);
 
         // Game Panel
-        layeredPane.addKeyListener(keyHandler);
-        layeredPane.addMouseListener(mouseHandler);
+        layeredPane.addKeyListener(gamePanel.keyHandler);
+        layeredPane.addMouseListener(gamePanel.mouseHandler);
         layeredPane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -75,11 +76,12 @@ public class Main extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setEnabled(true);
-        setVisible(true);
 
-//        goToMainMenu();
-        startGame();
+        goToMainMenu();
+//        startGame();
 //        openTileEditor();
+
+        setVisible(true);
     }
 
     private static void showPanel(String card_panel) {
@@ -90,7 +92,9 @@ public class Main extends JFrame {
         showPanel(main);
         mainPanel.requestFocus();
 
-        gamePanel.stopGame();
+        if (Game.game != null) {
+            gamePanel.stopGame();
+        }
     }
 
     public static void startGame() {

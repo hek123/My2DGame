@@ -2,18 +2,24 @@ package game.ui.itemUI;
 
 import game.inventory.Slot;
 import game.item.Item;
+import game.ui.MouseHandler;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static game.main.GamePanel.*;
 
 public final class ItemGrabHandler {
+    private final MouseHandler mouseHandler;
+
     private final List<ItemContainer> itemContainers = new ArrayList<>();
 
     private Slot grabbedSlot;
     private ItemContainer grabbedContainer;
+
+    public ItemGrabHandler(MouseHandler mouseHandler) {
+        this.mouseHandler = mouseHandler;
+    }
 
     public void update() {
         if (mouseHandler.mousePressed && grabbedSlot == null) {

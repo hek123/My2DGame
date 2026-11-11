@@ -1,13 +1,14 @@
 package game.character.monster;
 
 import Utility.ImageAnchor;
+import game.event.Damage;
 import game.player.Player;
 import game.visual.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 public class RedSlime extends Monster {
     static final ImageAnchor[][] spriteImages = loadSimpleSpriteImages(imageFolder, "redslime", 2);
@@ -40,7 +41,7 @@ public class RedSlime extends Monster {
     @Override
     protected void entityInteraction(Entity entity) {
         if (entity instanceof Player player) {
-            player.receiveDamageFrom(getAttackDamage(), this);
+            player.receiveDamage(new Damage(this, getAttackDamage() ,0));
         }
     }
 }

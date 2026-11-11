@@ -22,6 +22,7 @@ public class MapScreen extends JPanel {
     MapScreen() {
         super(new GridBagLayout(), true);
 //        setBackground(Color.black);
+        setName("MapScreen");
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = c.gridy = 0;
         c.weightx = c.weighty = .8;
@@ -111,11 +112,11 @@ public class MapScreen extends JPanel {
             g2d.drawRect(selectedTile.x * tileSize - visible.x, selectedTile.y * tileSize - visible.y, tileSize, tileSize);
         }
     }
+}
 
-    class TilePanel extends JPanel {
-        TilePanel() {
-            super(null);
-            setBackground(Color.orange);
-        }
+class TilePanel extends JPanel {
+    TilePanel() {
+        super(null);
+        setBackground(Color.orange);
     }
 }

@@ -1,20 +1,21 @@
 package game.ui.itemUI;
 
 import game.item.Item;
+import game.main.GamePanel;
 import game.ui.Scalable;
 
 import java.awt.*;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 public class ItemBar implements Scalable {
     public Color background = new Color(0, 0, 0, 200);
     public Color border = new Color(200, 200, 200);
     public Color foreground = Color.white;
     public Stroke borderWidth = new BasicStroke(2);
-    public Font font = new Font("Arial", Font.BOLD, 4 * scale);
+    public Font font = new Font("Arial", Font.BOLD, 4 * GamePanel.scale);
 
-    private final int slotSize = tileSize;
+    private final int slotSize = GamePanel.tileSize;
     private final int nbSlots = 6;
     private final int width = 6 * slotSize, height = slotSize;
     private int x, y;

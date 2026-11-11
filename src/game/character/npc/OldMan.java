@@ -7,7 +7,7 @@ import game.visual.Entity;
 
 import java.awt.*;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 public class OldMan extends NPC {
     private static final ImageAnchor[][] spriteImages = loadSpriteImages(imageFolder, "oldman", 2);

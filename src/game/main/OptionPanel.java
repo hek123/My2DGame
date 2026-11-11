@@ -5,7 +5,8 @@ import main.Main;
 import javax.swing.*;
 import java.awt.*;
 
-import static game.main.GamePanel.game;
+import static game.main.Game.game;
+
 
 // TODO: keybindings
 public class OptionPanel extends JPanel {

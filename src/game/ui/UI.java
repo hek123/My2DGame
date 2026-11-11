@@ -7,19 +7,23 @@ import java.awt.image.BufferedImage;
 import Utility.UtilityTool;
 import game.character.Direction;
 import game.main.Game;
+import game.main.GamePanel;
 import game.main.GameState;
 import game.tile.TileManager;
 import game.ui.itemUI.ItemBar;
 import game.ui.itemUI.ItemGrabHandler;
 import game.visual.ColorBar;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
+import static game.main.GamePanel.tileSize;
 
 
 public class UI {
     private final Font pauseFont = new Font("Arial", Font.PLAIN, 80);
 
     public boolean debugInfo = false;
+
+    private final GamePanel gamePanel;
 
     private final Dialogue dialogue;
     private final ScrollingMessage message;
@@ -38,8 +42,9 @@ public class UI {
     final int heartSize = 2 * tileSize / 3;
     final int coinSize = 2 * tileSize / 3;
 
-    public UI() {
-        itemGrabHandler = new ItemGrabHandler();
+    public UI(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+        itemGrabHandler = new ItemGrabHandler(gamePanel.mouseHandler);
         dialogue = new Dialogue();
         itemBar = new ItemBar();
         inventoryScreen = new InventoryScreen(itemGrabHandler);
@@ -136,7 +141,7 @@ public class UI {
     }
 
     public void update() {
-        if (keyHandler.isKeyClicked(KeyEvent.VK_D))
+        if (gamePanel.keyHandler.isKeyClicked(KeyEvent.VK_D))
             game.ui.debugInfo = !game.ui.debugInfo;
         if (Game.gameState == GameState.INVENTORY) itemGrabHandler.update();
     }
@@ -215,7 +220,7 @@ public class UI {
             y += 30;
             g2d.drawString("Pos: " + game.player.getX() / tileSize + " " + game.player.getY() / tileSize, x, y);
             y += 20;
-            g2d.drawString("fps: " + fps, x, y);
+            g2d.drawString("fps: " + GamePanel.fps, x, y);
             y += 20;
         }
     }

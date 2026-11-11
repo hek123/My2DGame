@@ -4,11 +4,12 @@ import Utility.ImageAnchor;
 import Utility.UtilityTool;
 import Utility.Vector2D;
 import game.character.Character;
+import game.main.GamePanel;
 import game.player.Player;
 
 import java.awt.*;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
 
 
 public class ObjectDoor extends SuperObject {
@@ -38,7 +39,7 @@ public class ObjectDoor extends SuperObject {
         if (character instanceof Player player) {
             if (player.weapon[0] != null && player.weapon[0].getName().equals("Axe")) {
                 life--;
-                shakeCtr = FPS / 2;
+                shakeCtr = GamePanel.FPS / 2;
             }
         }
     }
@@ -48,7 +49,7 @@ public class ObjectDoor extends SuperObject {
     @Override
     public void updateA() {
         if (shakeCtr > 0) {
-            if (shakeCtr % (FPS / 20) == 0) {
+            if (shakeCtr % (GamePanel.FPS / 20) == 0) {
                 image.anchor().x = (int) ((Math.random() - .5) * 4);
                 image.anchor().y = (int) ((Math.random() - .5) * 4);
             }

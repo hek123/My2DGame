@@ -2,7 +2,9 @@ package game.character.npc;
 
 import game.character.Direction;
 import game.character.Character;
+import game.event.Damage;
 import game.player.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -35,5 +37,5 @@ public abstract class NPC extends Character {
     }
 
     @Override
-    public void receiveDamageFrom(int damage, Character source) {}
+    public void receiveDamage(@NotNull Damage damage) {}
 }

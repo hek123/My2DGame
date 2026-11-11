@@ -5,7 +5,7 @@ import Utility.UtilityTool;
 import Utility.Vector2D;
 import game.player.Player;
 
-import static game.main.GamePanel.game;
+import static game.main.Game.game;
 
 
 public class ObjectBoots extends SuperObject {

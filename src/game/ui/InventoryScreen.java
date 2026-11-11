@@ -10,7 +10,8 @@ import game.ui.itemUI.ItemSlotUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static game.main.GamePanel.*;
+import static game.main.Game.game;
+import static game.main.GamePanel.tileSize;
 
 
 public class InventoryScreen extends subWindow implements Scalable {
